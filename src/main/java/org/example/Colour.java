@@ -1,11 +1,32 @@
 package org.example;
 
-public record Colour(float r, float g, float b) {
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
+public final class Colour {
+    private float r;
+    private float g;
+    private float b;
+
+    public Colour(float r, float g, float b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
     public Colour add(Colour c2) {
         return new Colour(
                 this.r() + c2.r(),
                 this.g() + c2.g(),
                 this.b() + c2.b()
+        );
+    }
+
+    public Colour multiply(Colour c2) {
+        return new Colour(
+                this.r() * c2.r(),
+                this.g() * c2.g(),
+                this.b() * c2.b()
         );
     }
 
@@ -24,4 +45,23 @@ public record Colour(float r, float g, float b) {
                 c.b() * a
         );
     }
+
+    public void replace(Colour c) {
+        this.r = c.r();
+        this.g = c.g();
+        this.b = c.b();
+    }
+
+    public float r() {
+        return r;
+    }
+
+    public float g() {
+        return g;
+    }
+
+    public float b() {
+        return b;
+    }
+
 }

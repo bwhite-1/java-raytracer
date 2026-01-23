@@ -34,9 +34,16 @@ public class Image {
 
             for (int y = 0; y < imageHeight; y++) {
                 for (int x = 0; x < imageWidth; x++) {
-                    int r = redAt(x, y);
-                    int g = greenAt(x, y);
-                    int b = blueAt(x, y);
+                    float rRaw = redAt(x, y);
+                    float gRaw = greenAt(x, y);
+                    float bRaw = blueAt(x, y);
+
+                    System.out.println(rRaw);
+
+                    int r = (int) (clamp(linearToGamma(rRaw)) * 255.999);
+                    int g = (int) (clamp(linearToGamma(gRaw)) * 255.999);
+                    int b = (int) (clamp(linearToGamma(bRaw)) * 255.999);
+
                     out.write(r + " " + g + " " + b + " ");
                 }
                 out.write("\n");
@@ -48,16 +55,16 @@ public class Image {
         colour[getIndex(x, y)] = colour[getIndex(x, y)].add(c.divide(samplesPerPixel));
     }
 
-    private int redAt(int x, int y) {
-        return (int)(clamp(colour[getIndex(x, y)].r()) * 255.999);
+    private float redAt(int x, int y) {
+        return colour[getIndex(x, y)].r();
     }
 
-    private int greenAt(int x, int y) {
-        return (int) (clamp(colour[getIndex(x, y)].g()) * 255.999);
+    private float greenAt(int x, int y) {
+        return colour[getIndex(x, y)].g();
     }
 
-    private int blueAt(int x, int y) {
-        return (int) (clamp(colour[getIndex(x, y)].b()) * 255.999);
+    private float blueAt(int x, int y) {
+        return colour[getIndex(x, y)].b();
     }
 
     private int getIndex(int x, int y) {
@@ -66,5 +73,12 @@ public class Image {
 
     private float clamp(float v) {
         return Math.max(0f, Math.min(1f, v));
+    }
+
+    private float linearToGamma(float l) {
+        if (l > 0) {
+            return (float) Math.sqrt(l);
+        }
+        return 0;
     }
 }

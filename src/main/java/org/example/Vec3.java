@@ -55,6 +55,37 @@ public record Vec3(float x, float y, float z) {
         return new Vec3(-x, -y, -z);
     }
 
+    private static Vec3 random() {
+        return new Vec3(
+                (float) (2 * (Math.random() - 0.5)),
+                (float) (2 * (Math.random() - 0.5)),
+                (float) (2 * (Math.random() - 0.5))
+        );
+    }
+
+    public static Vec3 randomUnitVector() {
+        while (true) {
+            Vec3 p = Vec3.random();
+            float lengthSquared = p.lengthSquared();
+            if (lengthSquared > 1e-80 && lengthSquared <= 1) {
+                return p.divide(lengthSquared);
+            }
+        }
+    }
+
+    public static Vec3 randomOnHemisphere(Vec3 normal) {
+        Vec3 randomUnitVector = randomUnitVector();
+        if (Vec3.dot(randomUnitVector, normal) > 0) {
+            return randomUnitVector;
+        } else {
+            return randomUnitVector.negate();
+        }
+    }
+
+    public boolean nearZero() {
+        return Math.abs(x) < 1e-8 && Math.abs(y) < 1e-8 && Math.abs(z) < 1e-8;
+    }
+
     @Override
     public String toString() {
         return "Vec3(" + x + ", " + y + ", " + z + ")";

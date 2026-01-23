@@ -4,10 +4,12 @@ public class Sphere implements Hittable {
 
     private final Vec3 center;
     private final float radius;
+    private final Material material;
 
-    public Sphere(Vec3 center, float radius) {
+    public Sphere(Vec3 center, float radius, Material material) {
         this.center = center;
         this.radius = radius;
+        this.material = material;
     }
 
     public Intersection hit(Ray ray) {
@@ -26,7 +28,7 @@ public class Sphere implements Hittable {
         if (t < 0.001f) return null;
 
         Vec3 normal = ray.at(t).subtract(center).normalize();
-        return new Intersection(null, normal, null, t);
+        return new Intersection(ray.at(t), normal, material, t);
     }
 
 }

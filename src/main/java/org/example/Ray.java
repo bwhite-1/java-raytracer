@@ -1,8 +1,8 @@
 package org.example;
 
 public class Ray {
-    private final Vec3 origin;
-    private final Vec3 direction;
+    private Vec3 origin;
+    private Vec3 direction;
 
     public Ray(Vec3 origin, Vec3 direction) {
         this.origin = origin;
@@ -19,5 +19,10 @@ public class Ray {
 
     public Vec3 at(float t) {
         return origin.add(direction().multiply(t));
+    }
+
+    public void replace(Vec3 origin, Vec3 direction) {
+        this.origin = origin;
+        this.direction = direction;
     }
 }
