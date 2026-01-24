@@ -11,7 +11,7 @@ public class Main {
 
         Integrator integrator = new Integrator();
 
-
+        
         for (int j = image.getImageHeight() - 1; j >= 0; j--) {
             for (int i = 0; i < image.getImageWidth(); i++) {
                 for (int s = 0; s < image.getSamplesPerPixel(); s++) {
@@ -27,9 +27,9 @@ public class Main {
     }
 
     private static Scene getScene() {
-        Sphere sphere1 = new Sphere(new Vec3(-1, 0, -1), 0.5f, new Lambertian(new Colour(0.8f, 0.2f, 0.2f)));
-        Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Lambertian(new Colour(0.2f, 0.8f, 0.2f)));
-        Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Lambertian(new Colour(0.2f, 0.2f, 0.8f)));
+        Sphere sphere1 = new Sphere(new Vec3(-1, 0, -1), 0.5f, new Metal(0.2f, new Colour(0.8f, 0.8f, 0.8f)));
+        Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Lambertian(new Colour(0.1f, 0.2f, 0.5f)));
+        Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Metal(0.9f, new Colour(0.8f, 0.6f, 0.2f)));
         Sphere sphere4 = new Sphere(new Vec3(0, -100.5f, -1), 100, new Lambertian(new Colour(0.2f, 0.2f, 0.2f)));
 
         AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();

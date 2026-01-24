@@ -2,7 +2,6 @@ package org.example;
 
 import lombok.Getter;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -26,7 +25,6 @@ public class Image {
     }
 
     public void writeToFile(String path) throws IOException {
-        File file = new File(path);
         try (FileWriter out = new FileWriter(path)) {
             out.write("P3\n");
             out.write(imageWidth + " " + imageHeight + "\n");

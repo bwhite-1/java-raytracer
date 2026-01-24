@@ -86,6 +86,10 @@ public record Vec3(float x, float y, float z) {
         return Math.abs(x) < 1e-8 && Math.abs(y) < 1e-8 && Math.abs(z) < 1e-8;
     }
 
+    public Vec3 reflect(Vec3 n) {
+        return this.subtract(n.multiply(2 * dot(this, n)));
+    }
+
     @Override
     public String toString() {
         return "Vec3(" + x + ", " + y + ", " + z + ")";
