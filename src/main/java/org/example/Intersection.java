@@ -10,16 +10,19 @@ public class Intersection {
     private Vec3 normal;
     private Material material;
     private float t;
+    private boolean frontFace;
 
     public Intersection(
+            Ray r,
             Vec3 position,
             Vec3 normal,
             Material material,
             float t
     ) {
         this.position = position;
-        this.normal = normal;
         this.material = material;
         this.t = t;
+        this.frontFace = Vec3.dot(r.direction(), normal) < 0;
+        this.normal = frontFace ? normal : normal.negate();
     }
 }

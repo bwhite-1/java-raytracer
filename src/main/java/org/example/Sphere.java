@@ -23,15 +23,14 @@ public class Sphere implements Hittable {
 
         float sqrtD = (float)Math.sqrt(discriminant);
 
-        // nearest valid root
         float t = (-b - sqrtD) / (2 * a);
         if (!rayT.surrounds(t)) {
             t = (-b + sqrtD) / (2 * a);
         }
         if (t < 0.001f) return null;
 
-        Vec3 normal = ray.at(t).subtract(center).normalize();
-        return new Intersection(ray.at(t), normal, material, t);
+        Vec3 normal = ray.at(t).subtract(center).divide(radius);
+        return new Intersection(ray, ray.at(t), normal, material, t);
     }
 
 }

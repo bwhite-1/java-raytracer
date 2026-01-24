@@ -38,8 +38,6 @@ public class Image {
                     float gRaw = greenAt(x, y);
                     float bRaw = blueAt(x, y);
 
-                    System.out.println(rRaw);
-
                     int r = (int) (clamp(linearToGamma(rRaw)) * 255.999);
                     int g = (int) (clamp(linearToGamma(gRaw)) * 255.999);
                     int b = (int) (clamp(linearToGamma(bRaw)) * 255.999);
