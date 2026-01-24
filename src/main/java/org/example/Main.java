@@ -5,16 +5,12 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        // for each pixel
-            // for each sample
-                // generate ray
-                // solve Li equation
-                // add sample to image buffer
         Image image = new Image(400, 16.0f/9.0f, 50);
         Camera camera = new Camera(16.0f/9.0f, 2f, 1f);
         Scene scene = getScene();
 
         Integrator integrator = new Integrator();
+
 
         for (int j = image.getImageHeight() - 1; j >= 0; j--) {
             for (int i = 0; i < image.getImageWidth(); i++) {
@@ -22,7 +18,7 @@ public class Main {
                     float u = (float) (i + Math.random()) / (image.getImageWidth() -1);
                     float v = (float) (image.getImageHeight() - 1 - (j + Math.random())) / (image.getImageHeight() - 1);
                     Ray ray = camera.getRay(u, v);
-                    Colour pixelColour = integrator.li(ray, scene,  5);
+                    Colour pixelColour = integrator.li(ray, scene, new Interval(), 5);
                     image.addColour(i, j, pixelColour);
                 }
             }

@@ -12,7 +12,7 @@ public class Sphere implements Hittable {
         this.material = material;
     }
 
-    public Intersection hit(Ray ray) {
+    public Intersection hit(Ray ray, Interval rayT) {
         Vec3 oc = ray.origin().subtract(center);
         float a = ray.direction().lengthSquared();
         float b = 2f * Vec3.dot(ray.direction(), oc);
@@ -25,6 +25,9 @@ public class Sphere implements Hittable {
 
         // nearest valid root
         float t = (-b - sqrtD) / (2 * a);
+        if (!rayT.surrounds(t)) {
+            t = (-b + sqrtD) / (2 * a);
+        }
         if (t < 0.001f) return null;
 
         Vec3 normal = ray.at(t).subtract(center).normalize();
