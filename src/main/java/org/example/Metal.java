@@ -18,7 +18,9 @@ public class Metal implements Material {
             Ray scattered
     ) {
         Vec3 reflectedDirection = rayIn.direction().reflect(intersection.getNormal());
-        Vec3 fuzzed = reflectedDirection.normalize().add(Vec3.randomUnitVector().multiply(fuzziness));
+        Vec3 fuzzed = reflectedDirection
+                .add(Vec3.randomUnitVector().multiply(fuzziness))
+                .normalize();
         scattered.replace(intersection.getPosition(), fuzzed);
         attenuation.replace(albedo);
         return Vec3.dot(scattered.direction(), intersection.getNormal()) > 0;
