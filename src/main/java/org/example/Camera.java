@@ -2,6 +2,8 @@ package org.example;
 
 
 import lombok.Builder;
+import org.example.core.Ray;
+import org.example.core.Vec3;
 
 public class Camera {
 

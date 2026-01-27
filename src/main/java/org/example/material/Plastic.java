@@ -1,4 +1,9 @@
-package org.example;
+package org.example.material;
+
+import org.example.core.Colour;
+import org.example.core.Intersection;
+import org.example.core.Ray;
+import org.example.core.Vec3;
 
 public class Plastic implements Material {
     private final Lambertian lambertian;

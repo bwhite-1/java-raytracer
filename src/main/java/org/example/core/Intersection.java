@@ -1,7 +1,8 @@
-package org.example;
+package org.example.core;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.material.Material;
 
 @Getter
 @Setter

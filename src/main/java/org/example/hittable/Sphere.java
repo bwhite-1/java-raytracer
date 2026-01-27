@@ -1,4 +1,10 @@
-package org.example;
+package org.example.hittable;
+
+import org.example.core.Intersection;
+import org.example.core.Interval;
+import org.example.material.Material;
+import org.example.core.Ray;
+import org.example.core.Vec3;
 
 public class Sphere implements Hittable {
 

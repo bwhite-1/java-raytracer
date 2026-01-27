@@ -1,6 +1,8 @@
 package org.example;
 
 import lombok.Getter;
+import org.example.accelerationstructure.AccelerationStructure;
+import org.example.hittable.Hittable;
 
 import java.util.List;
 

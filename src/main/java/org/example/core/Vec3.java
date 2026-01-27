@@ -1,4 +1,4 @@
-package org.example;
+package org.example.core;
 
 public record Vec3(float x, float y, float z) {
 

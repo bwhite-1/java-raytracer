@@ -1,4 +1,6 @@
-package org.example;
+package org.example.accelerationstructure;
+
+import org.example.hittable.Hittable;
 
 import java.util.List;
 

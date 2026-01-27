@@ -1,6 +1,7 @@
 package org.example;
 
 import lombok.Getter;
+import org.example.core.Colour;
 
 import java.io.FileWriter;
 import java.io.IOException;

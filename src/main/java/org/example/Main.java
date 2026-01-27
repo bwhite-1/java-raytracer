@@ -1,5 +1,16 @@
 package org.example;
 
+import org.example.accelerationstructure.AccelerationStructure;
+import org.example.accelerationstructure.NaiveAccelerationStructure;
+import org.example.core.Colour;
+import org.example.core.Interval;
+import org.example.core.Ray;
+import org.example.hittable.Sphere;
+import org.example.material.Lambertian;
+import org.example.material.Metal;
+import org.example.material.Plastic;
+import org.example.core.Vec3;
+
 import java.io.IOException;
 import java.util.List;
 

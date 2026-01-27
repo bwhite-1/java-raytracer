@@ -1,4 +1,9 @@
-package org.example;
+package org.example.accelerationstructure;
+
+import org.example.hittable.Hittable;
+import org.example.core.Intersection;
+import org.example.core.Interval;
+import org.example.core.Ray;
 
 import java.util.ArrayList;
 import java.util.List;
