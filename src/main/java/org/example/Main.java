@@ -2,6 +2,8 @@ package org.example;
 
 import org.example.accelerationstructure.AccelerationStructure;
 import org.example.accelerationstructure.NaiveAccelerationStructure;
+import org.example.background.Background;
+import org.example.background.Sky;
 import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
@@ -21,7 +23,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(400, 16.0f/9.0f, 10);
+        Image image = new Image(400, 16.0f/9.0f, 20);
 
         Camera camera = Camera.builder()
                 .lookFrom(new Vec3(5, 0, 5))
@@ -53,15 +55,22 @@ public class Main {
         Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Plastic(new Colour(0.8f, 0.2f, 0.2f), 0.02f, 1.5f));
         Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Metal(0.9f, new Colour(0.8f, 0.6f, 0.2f)));
         Sphere sphere4 = new Sphere(new Vec3(0, -100.5f, -1), 100, new Lambertian(new Colour(0.2f, 0.2f, 0.2f)));
-
+        Background background = new Sky(
+                new Colour(0.2f, 0.3f, 0.5f),
+                new Colour(1, 1, 1)
+        );
         AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
-        return new Scene(accelerationStructure, List.of(sphere1, sphere2, sphere3, sphere4));
+        return new Scene(accelerationStructure, List.of(sphere1, sphere2, sphere3, sphere4), background);
     }
 
     private static Scene getScene() throws IOException {
         ObjParser objParser = new ObjParser();
         List<Triangle> tris = objParser.parseObjFile("src/main/resources/obj/suzanne.obj");
         AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
-        return new Scene(accelerationStructure, tris);
+        Background background = new Sky(
+                new Colour(0.2f, 0.3f, 0.8f),
+                new Colour(0.6f, 0.7f, 0.8f)
+        );
+        return new Scene(accelerationStructure, tris, background);
     }
 }

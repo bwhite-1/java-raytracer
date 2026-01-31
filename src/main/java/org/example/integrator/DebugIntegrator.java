@@ -17,8 +17,6 @@ public class DebugIntegrator implements Integrator {
             float b = 0.5f * (n.z() + 1);
             return new Colour(r, g, b);        }
         Vec3 unitDirection = ray.direction().normalize();
-        float a = 0.5f * (unitDirection.y() + 1f);
-        return Colour.multiply(new Colour(1f, 1f, 1f), (1f - a))
-                .add(Colour.multiply(new Colour(0.2f, 0.3f, 0.5f), a));
+        return scene.getBackground().backgroundColour(unitDirection);
     }
 }

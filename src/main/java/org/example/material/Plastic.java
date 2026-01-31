@@ -32,7 +32,7 @@ public class Plastic implements Material {
                     .add(Vec3.randomUnitVector().multiply(roughness))
                     .normalize();
             scattered.replace(intersection.getPosition(), fuzzed);
-            attenuation.replace(Colour.multiply(new Colour(1,1,1), 1 - reflectance));
+            attenuation.replace(new Colour(1,1,1).multiply(1 - reflectance));
             return Vec3.dot(scattered.direction(), intersection.getNormal()) > 0;
         }
     }

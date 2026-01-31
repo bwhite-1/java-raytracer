@@ -38,11 +38,11 @@ public final class Colour {
         );
     }
 
-    public static Colour multiply(Colour c, float a) {
+    public Colour multiply(float a) {
         return new Colour(
-                c.r() * a,
-                c.g() * a,
-                c.b() * a
+                this.r() * a,
+                this.g() * a,
+                this.b() * a
         );
     }
 
