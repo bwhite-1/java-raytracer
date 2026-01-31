@@ -10,7 +10,7 @@ import java.util.List;
 public class Scene {
     private final AccelerationStructure accelerationStructure;
 
-    public Scene(AccelerationStructure accelerationStructure, List<Hittable> objects) {
+    public Scene(AccelerationStructure accelerationStructure, List<? extends Hittable> objects) {
         this.accelerationStructure = accelerationStructure;
         accelerationStructure.buildAccelerationStructure(objects);
     }

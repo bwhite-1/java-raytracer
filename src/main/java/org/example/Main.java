@@ -6,28 +6,33 @@ import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.hittable.Sphere;
+import org.example.hittable.Triangle;
+import org.example.integrator.DebugIntegrator;
+import org.example.integrator.Integrator;
+import org.example.integrator.SimpleIntegrator;
 import org.example.material.Lambertian;
 import org.example.material.Metal;
 import org.example.material.Plastic;
 import org.example.core.Vec3;
+import org.example.parser.ObjParser;
 
 import java.io.IOException;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(400, 16.0f/9.0f, 100);
+        Image image = new Image(400, 16.0f/9.0f, 10);
 
         Camera camera = Camera.builder()
-                .lookFrom(new Vec3(-2, 2, 1))
-                .lookAt(new Vec3(0, 0, -1))
+                .lookFrom(new Vec3(5, 0, 5))
+                .lookAt(new Vec3(0, 0, 0))
                 .vUp(new Vec3(0, 1, 0))
-                .vfov(20)
+                .vfov(30)
                 .aspectRatio(16.0f/9.0f)
                 .build();
 
         Scene scene = getScene();
-        Integrator integrator = new Integrator();
+        Integrator integrator = new SimpleIntegrator();
 
         for (int j = image.getImageHeight() - 1; j >= 0; j--) {
             for (int i = 0; i < image.getImageWidth(); i++) {
@@ -43,7 +48,7 @@ public class Main {
         image.writeToFile("wibble.ppm");
     }
 
-    private static Scene getScene() {
+    private static Scene getSceneZZZ() {
         Sphere sphere1 = new Sphere(new Vec3(-1, 0, -1), 0.5f, new Metal(0.01f, new Colour(0.8f, 0.6f, 0.6f)));
         Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Plastic(new Colour(0.8f, 0.2f, 0.2f), 0.02f, 1.5f));
         Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Metal(0.9f, new Colour(0.8f, 0.6f, 0.2f)));
@@ -51,5 +56,12 @@ public class Main {
 
         AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
         return new Scene(accelerationStructure, List.of(sphere1, sphere2, sphere3, sphere4));
+    }
+
+    private static Scene getScene() throws IOException {
+        ObjParser objParser = new ObjParser();
+        List<Triangle> tris = objParser.parseObjFile("src/main/resources/obj/suzanne.obj");
+        AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
+        return new Scene(accelerationStructure, tris);
     }
 }

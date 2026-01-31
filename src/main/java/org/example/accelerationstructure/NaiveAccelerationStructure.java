@@ -17,19 +17,20 @@ public class NaiveAccelerationStructure implements AccelerationStructure {
 
     @Override
     public Intersection hit(Ray ray, Interval rayT) {
-        float closestSoFar = rayT.getMax();
+        float closestSoFar = Float.POSITIVE_INFINITY;
+        Intersection closestHit = null;
         for (Hittable hittable : hittableList) {
-            Intersection intersection = hittable.hit(ray, new Interval(rayT.getMin(), closestSoFar));
+            Intersection intersection = hittable.hit(ray, new Interval(0.001f, closestSoFar));
             if (intersection != null) {
                 closestSoFar = intersection.getT();
-                return intersection;
+                closestHit = intersection;
             }
         }
-        return null;
+        return closestHit;
     }
 
     @Override
-    public void buildAccelerationStructure(List<Hittable> objects) {
+    public void buildAccelerationStructure(List<? extends Hittable> objects) {
         hittableList.addAll(objects);
     }
 }

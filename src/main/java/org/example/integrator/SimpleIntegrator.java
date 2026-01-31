@@ -1,13 +1,14 @@
-package org.example;
+package org.example.integrator;
 
+import org.example.Scene;
 import org.example.core.Colour;
 import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.core.Vec3;
 
-public class Integrator {
-    Colour li(Ray ray, Scene scene, Interval interval, int depth) {
+public class SimpleIntegrator implements Integrator {
+    public Colour li(Ray ray, Scene scene, Interval interval, int depth) {
         if (depth <= 0) {
             return new Colour(1, 1, 1);
         }
@@ -23,6 +24,6 @@ public class Integrator {
         Vec3 unitDirection = ray.direction().normalize();
         float a = 0.5f * (unitDirection.y() + 1f);
         return Colour.multiply(new Colour(1f, 1f, 1f), (1f - a))
-                .add(Colour.multiply(new Colour(0.5f, 0.7f, 1f), a));
+                .add(Colour.multiply(new Colour(0.2f, 0.3f, 0.5f), a));
     }
 }
