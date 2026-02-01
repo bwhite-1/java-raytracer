@@ -1,15 +1,15 @@
 package org.example;
 
-import org.example.accelerationstructure.AccelerationStructure;
+import org.example.accelerationstructure.BvhNode;
 import org.example.accelerationstructure.NaiveAccelerationStructure;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
+import org.example.hittable.Hittable;
 import org.example.hittable.SmoothTriangle;
 import org.example.hittable.Sphere;
-import org.example.hittable.Triangle;
 import org.example.integrator.DebugIntegrator;
 import org.example.integrator.Integrator;
 import org.example.integrator.SimpleIntegrator;
@@ -24,18 +24,18 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(400, 16.0f/9.0f, 10);
+        Image image = new Image(400, 16.0f/9.0f, 20);
 
         Camera camera = Camera.builder()
-                .lookFrom(new Vec3(5, 0, 5))
+                .lookFrom(new Vec3(2, 0, 2))
                 .lookAt(new Vec3(0, 0, 0))
                 .vUp(new Vec3(0, 1, 0))
-                .vfov(30)
+                .vfov(80)
                 .aspectRatio(16.0f/9.0f)
                 .build();
 
         Scene scene = getScene();
-        Integrator integrator = new DebugIntegrator();
+        Integrator integrator = new SimpleIntegrator();
 
         for (int j = image.getImageHeight() - 1; j >= 0; j--) {
             for (int i = 0; i < image.getImageWidth(); i++) {
@@ -60,8 +60,8 @@ public class Main {
                 new Colour(0.2f, 0.3f, 0.5f),
                 new Colour(1, 1, 1)
         );
-        AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
-        return new Scene(accelerationStructure, List.of(sphere1, sphere2, sphere3, sphere4), background);
+        Hittable accelerationStructure = new NaiveAccelerationStructure( List.of(sphere1, sphere2, sphere3, sphere4));
+        return new Scene(accelerationStructure, background);
     }
 
     private static Scene getScene() throws IOException {
@@ -69,11 +69,15 @@ public class Main {
         List<SmoothTriangle> tris = objParser.parseObjFile(
                 "src/main/resources/obj/suzanne.obj",
                 new Lambertian(new Colour(0.5f, 0.5f, 0.5f)));
-        AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
+        Hittable accelerationStructure = new BvhNode(
+                tris,
+                0,
+                tris.size()
+        );
         Background background = new Sky(
                 new Colour(0.2f, 0.3f, 0.8f),
                 new Colour(0.6f, 0.7f, 0.8f)
         );
-        return new Scene(accelerationStructure, tris, background);
+        return new Scene(accelerationStructure, background);
     }
 }

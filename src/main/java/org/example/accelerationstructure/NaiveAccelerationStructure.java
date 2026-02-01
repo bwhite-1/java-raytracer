@@ -1,5 +1,6 @@
 package org.example.accelerationstructure;
 
+import org.example.core.Aabb;
 import org.example.hittable.Hittable;
 import org.example.core.Intersection;
 import org.example.core.Interval;
@@ -8,11 +9,11 @@ import org.example.core.Ray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NaiveAccelerationStructure implements AccelerationStructure {
-    private final List<Hittable> hittableList;
+public class NaiveAccelerationStructure implements Hittable {
+    private final List<? extends Hittable> hittableList;
 
-    public NaiveAccelerationStructure() {
-        hittableList = new ArrayList<>();
+    public NaiveAccelerationStructure(List<? extends Hittable> hittableList) {
+        this.hittableList = hittableList;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class NaiveAccelerationStructure implements AccelerationStructure {
     }
 
     @Override
-    public void buildAccelerationStructure(List<? extends Hittable> objects) {
-        hittableList.addAll(objects);
+    public Aabb boundingBox() {
+        return null;
     }
 }

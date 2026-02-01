@@ -1,5 +1,6 @@
 package org.example.hittable;
 
+import org.example.core.Aabb;
 import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.material.Material;
@@ -37,6 +38,14 @@ public class Sphere implements Hittable {
 
         Vec3 normal = ray.at(t).subtract(center).divide(radius);
         return new Intersection(ray, ray.at(t), normal, material, t);
+    }
+
+    @Override
+    public Aabb boundingBox() {
+        return new Aabb(
+                center.add(new Vec3(-radius, -radius, -radius)),
+                center.add(new Vec3(radius, radius, radius))
+        );
     }
 
 }

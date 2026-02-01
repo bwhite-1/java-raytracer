@@ -6,6 +6,15 @@ public record Vec3(float x, float y, float z) {
         this(0, 0, 0);
     }
 
+    public float get(int i) {
+        return switch(i) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> throw new IndexOutOfBoundsException();
+        };
+    }
+
     public Vec3 add(Vec3 v) {
         return new Vec3(x + v.x, y + v.y, z + v.z);
     }
@@ -22,9 +31,20 @@ public record Vec3(float x, float y, float z) {
         return multiply(1.0f / t);
     }
 
-    // Component-wise multiplication (useful for colors)
-    public Vec3 multiply(Vec3 v) {
-        return new Vec3(x * v.x, y * v.y, z * v.z);
+    public Vec3 min(Vec3 v) {
+        return new Vec3(
+                Math.min(this.x, v.x),
+                Math.min(this.y, v.y),
+                Math.min(this.z, v.z)
+        );
+    }
+
+    public Vec3 max(Vec3 v) {
+        return new Vec3(
+                Math.max(this.x, v.x),
+                Math.max(this.y, v.y),
+                Math.max(this.z, v.z)
+        );
     }
 
     public float length() {

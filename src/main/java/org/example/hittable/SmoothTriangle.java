@@ -1,5 +1,6 @@
 package org.example.hittable;
 
+import org.example.core.Aabb;
 import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.core.Ray;
@@ -71,5 +72,12 @@ public class SmoothTriangle implements Hittable {
                         .normalize();
 
         return new Intersection(ray, ray.at(t), interpolatedNormal, material, t);
+    }
+
+    @Override
+    public Aabb boundingBox() {
+        Vec3 min = v0.min(v1).min(v2);
+        Vec3 max = v0.max(v1).max(v2);
+        return new Aabb(min, max);
     }
 }
