@@ -7,6 +7,7 @@ import org.example.background.Sky;
 import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
+import org.example.hittable.SmoothTriangle;
 import org.example.hittable.Sphere;
 import org.example.hittable.Triangle;
 import org.example.integrator.DebugIntegrator;
@@ -23,7 +24,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(400, 16.0f/9.0f, 20);
+        Image image = new Image(400, 16.0f/9.0f, 10);
 
         Camera camera = Camera.builder()
                 .lookFrom(new Vec3(5, 0, 5))
@@ -34,7 +35,7 @@ public class Main {
                 .build();
 
         Scene scene = getScene();
-        Integrator integrator = new SimpleIntegrator();
+        Integrator integrator = new DebugIntegrator();
 
         for (int j = image.getImageHeight() - 1; j >= 0; j--) {
             for (int i = 0; i < image.getImageWidth(); i++) {
@@ -65,7 +66,9 @@ public class Main {
 
     private static Scene getScene() throws IOException {
         ObjParser objParser = new ObjParser();
-        List<Triangle> tris = objParser.parseObjFile("src/main/resources/obj/suzanne.obj");
+        List<SmoothTriangle> tris = objParser.parseObjFile(
+                "src/main/resources/obj/suzanne.obj",
+                new Lambertian(new Colour(0.5f, 0.5f, 0.5f)));
         AccelerationStructure accelerationStructure = new NaiveAccelerationStructure();
         Background background = new Sky(
                 new Colour(0.2f, 0.3f, 0.8f),
