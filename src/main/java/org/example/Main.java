@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.accelerationstructure.BvhNode;
 import org.example.accelerationstructure.NaiveAccelerationStructure;
+import org.example.accelerationstructure.RandomMedianSplit;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
@@ -72,7 +73,8 @@ public class Main {
         Hittable accelerationStructure = new BvhNode(
                 tris,
                 0,
-                tris.size()
+                tris.size(),
+                new RandomMedianSplit()
         );
         Background background = new Sky(
                 new Colour(0.2f, 0.3f, 0.8f),
