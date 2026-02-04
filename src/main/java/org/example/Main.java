@@ -9,7 +9,6 @@ import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.hittable.Hittable;
-import org.example.hittable.SmoothTriangle;
 import org.example.hittable.Sphere;
 import org.example.integrator.DebugIntegrator;
 import org.example.integrator.Integrator;
@@ -21,17 +20,18 @@ import org.example.core.Vec3;
 import org.example.parser.ObjParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(400, 16.0f/9.0f, 20);
+        Image image = new Image(800, 16.0f/9.0f, 100);
 
         Camera camera = Camera.builder()
-                .lookFrom(new Vec3(2, 0, 2))
-                .lookAt(new Vec3(0, 0, 0))
+                .lookFrom(new Vec3(100, 0, -100))
+                .lookAt(new Vec3(0, 0, 25))
                 .vUp(new Vec3(0, 1, 0))
-                .vfov(80)
+                .vfov(65)
                 .aspectRatio(16.0f/9.0f)
                 .build();
 
@@ -67,13 +67,22 @@ public class Main {
 
     private static Scene getScene() throws IOException {
         ObjParser objParser = new ObjParser();
-        List<SmoothTriangle> tris = objParser.parseObjFile(
-                "src/main/resources/obj/suzanne.obj",
-                new Lambertian(new Colour(0.5f, 0.5f, 0.5f)));
+        Hittable mesh = objParser.parseObjFile(
+                "src/main/resources/obj/xyzrgb_dragon.obj",
+                new Plastic(new Colour(0.2f, 0.2f, 0.3f), 0.005f, 1.5f),
+                false);
+
+        List<Hittable> world = new ArrayList<>();
+        world.add(mesh);
+        world.add(new Sphere(new Vec3(0, -10039, 0),
+                10000,
+                new Lambertian(new Colour(0.1f, 0.1f, 0.1f)))
+        );
+
         Hittable accelerationStructure = new BvhNode(
-                tris,
+                world,
                 0,
-                tris.size(),
+                world.size(),
                 new RandomMedianSplit()
         );
         Background background = new Sky(
