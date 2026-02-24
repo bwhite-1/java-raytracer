@@ -25,8 +25,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(800, 16.0f/9.0f, 100);
-
+        Image image = new Image(800, 16.0f/9.0f, 1);
         Camera camera = Camera.builder()
                 .lookFrom(new Vec3(100, 0, -100))
                 .lookAt(new Vec3(0, 0, 25))
@@ -34,25 +33,14 @@ public class Main {
                 .vfov(65)
                 .aspectRatio(16.0f/9.0f)
                 .build();
-
-        Scene scene = getScene();
+        Scene scene = getScene(camera);
         Integrator integrator = new SimpleIntegrator();
 
-        for (int j = image.getImageHeight() - 1; j >= 0; j--) {
-            for (int i = 0; i < image.getImageWidth(); i++) {
-                for (int s = 0; s < image.getSamplesPerPixel(); s++) {
-                    float u = (float) (i + Math.random()) / (image.getImageWidth() -1);
-                    float v = (float) (image.getImageHeight() - 1 - (j + Math.random())) / (image.getImageHeight() - 1);
-                    Ray ray = camera.getRay(u, v);
-                    Colour pixelColour = integrator.li(ray, scene, new Interval(), 5);
-                    image.addColour(i, j, pixelColour);
-                }
-            }
-        }
-        image.writeToFile("wibble.ppm");
+        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 150);
+        orchestrator.render();
     }
 
-    private static Scene getSceneZZZ() {
+    private static Scene getSceneZZZ(Camera camera) {
         Sphere sphere1 = new Sphere(new Vec3(-1, 0, -1), 0.5f, new Metal(0.01f, new Colour(0.8f, 0.6f, 0.6f)));
         Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Plastic(new Colour(0.8f, 0.2f, 0.2f), 0.02f, 1.5f));
         Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Metal(0.9f, new Colour(0.8f, 0.6f, 0.2f)));
@@ -62,10 +50,10 @@ public class Main {
                 new Colour(1, 1, 1)
         );
         Hittable accelerationStructure = new NaiveAccelerationStructure( List.of(sphere1, sphere2, sphere3, sphere4));
-        return new Scene(accelerationStructure, background);
+        return new Scene(accelerationStructure, background, camera);
     }
 
-    private static Scene getScene() throws IOException {
+    private static Scene getScene(Camera camera) throws IOException {
         ObjParser objParser = new ObjParser();
         Hittable mesh = objParser.parseObjFile(
                 "src/main/resources/obj/xyzrgb_dragon.obj",
@@ -89,6 +77,6 @@ public class Main {
                 new Colour(0.2f, 0.3f, 0.8f),
                 new Colour(0.6f, 0.7f, 0.8f)
         );
-        return new Scene(accelerationStructure, background);
+        return new Scene(accelerationStructure, background, camera);
     }
 }

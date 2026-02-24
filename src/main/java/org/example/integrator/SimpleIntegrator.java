@@ -12,7 +12,7 @@ public class SimpleIntegrator implements Integrator {
         if (depth <= 0) {
             return new Colour(1, 1, 1);
         }
-        Intersection intersection = scene.getAccelerationStructure().hit(ray, interval);
+        Intersection intersection = scene.accelerationStructure().hit(ray, interval);
         if (intersection != null) {
             Ray scattered = new Ray(new Vec3(), new Vec3());
             Colour attenuation = new Colour(0, 0, 0);
@@ -22,6 +22,6 @@ public class SimpleIntegrator implements Integrator {
             return new Colour(0, 0, 0);
         }
         Vec3 unitDirection = ray.direction().normalize();
-        return scene.getBackground().backgroundColour(unitDirection);
+        return scene.background().backgroundColour(unitDirection);
     }
 }
