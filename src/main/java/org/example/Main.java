@@ -35,7 +35,7 @@ public class Main {
         Scene scene = getScene(camera);
         Integrator integrator = new SimpleIntegrator();
 
-        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 150);
+        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 64);
 
         RenderPanel panel = createSwingPanel(image);
         orchestrator.render(tile -> SwingUtilities.invokeLater(() -> panel.onTileFinished(tile)));

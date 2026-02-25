@@ -6,12 +6,20 @@ import org.example.core.Ray;
 import org.example.integrator.Integrator;
 
 import java.io.IOException;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.Consumer;
 
 public class TileOrchestrator {
     private final Image image;
     private final Scene scene;
     private final Integrator integrator;
+    private final Deque<Tile> tilesToRender;
+    private final ExecutorService executorService;
 
     private final int tileSize;
 
@@ -20,16 +28,27 @@ public class TileOrchestrator {
         this.scene = scene;
         this.integrator = integrator;
         this.tileSize = tileSize;
+        this.tilesToRender = new ConcurrentLinkedDeque<>();
+        this.executorService = Executors.newFixedThreadPool(4);
     }
 
     public record Tile(int startX, int endX, int startY, int endY) { }
 
     public void render(Consumer<Tile> onTileFinished) throws IOException {
+
         for (int i = 0; i < getNumberOfTiles(); i++) {
             Tile tile = getTile(i);
-            renderTile(tile);
-            onTileFinished.accept(tile);
+            tilesToRender.offer(tile);
         }
+
+        for (Tile tile : tilesToRender) {
+            executorService.submit(() -> {
+                renderTile(tile);
+                onTileFinished.accept(tile);
+            });
+        }
+
+        executorService.shutdown();
         image.writeToFile("wibble.ppm");
     }
 
