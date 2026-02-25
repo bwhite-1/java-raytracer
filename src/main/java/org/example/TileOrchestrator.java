@@ -6,6 +6,7 @@ import org.example.core.Ray;
 import org.example.integrator.Integrator;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class TileOrchestrator {
     private final Image image;
@@ -21,20 +22,20 @@ public class TileOrchestrator {
         this.tileSize = tileSize;
     }
 
-    public record Tile(int startX, int startY) {}
+    public record Tile(int startX, int endX, int startY, int endY) { }
 
-    public void render() throws IOException {
+    public void render(Consumer<Tile> onTileFinished) throws IOException {
         for (int i = 0; i < getNumberOfTiles(); i++) {
-            renderTile(getTile(i));
+            Tile tile = getTile(i);
+            renderTile(tile);
+            onTileFinished.accept(tile);
         }
         image.writeToFile("wibble.ppm");
     }
 
     private void renderTile(Tile tile) {
-        int maxX = Math.min(image.getImageWidth(), tile.startX + tileSize);
-        int minY = Math.max(0, tile.startY - tileSize);
-        for (int j = tile.startY - 1; j >= minY; j--) {
-            for (int i = tile.startX; i < maxX; i++) {
+        for (int j = tile.startY() - 1; j >= tile.endY(); j--) {
+            for (int i = tile.startX(); i < tile.endX(); i++) {
                 for (int s = 0; s < image.getSamplesPerPixel(); s++) {
                     float u = (float) (i + Math.random()) / (image.getImageWidth() -1);
                     float v = (float) (image.getImageHeight() - 1 - (j + Math.random())) / (image.getImageHeight() - 1);
@@ -49,8 +50,10 @@ public class TileOrchestrator {
     private Tile getTile(int index) {
         int tilesPerRow = (int) Math.ceil((float) image.getImageWidth() / (float) tileSize);
         int startX = (index % tilesPerRow) * tileSize;
+        int endX = Math.min(image.getImageWidth(), startX + tileSize);
         int startY = image.getImageHeight() - (index / tilesPerRow) * tileSize;
-        return new Tile(startX, startY);
+        int endY = Math.max(0, startY - tileSize);
+        return new Tile(startX, endX, startY, endY);
     }
 
     private int getNumberOfTiles() {

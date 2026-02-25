@@ -8,7 +8,6 @@ import org.example.background.Sky;
 import org.example.core.Colour;
 import org.example.hittable.Hittable;
 import org.example.hittable.Sphere;
-import org.example.integrator.DebugIntegrator;
 import org.example.integrator.Integrator;
 import org.example.integrator.SimpleIntegrator;
 import org.example.material.Lambertian;
@@ -25,7 +24,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Image image = new Image(800, 16.0f/9.0f, 1);
+        Image image = new Image(800, 16.0f/9.0f, 10);
         Camera camera = Camera.builder()
                 .lookFrom(new Vec3(100, 0, -100))
                 .lookAt(new Vec3(0, 0, 25))
@@ -36,27 +35,23 @@ public class Main {
         Scene scene = getScene(camera);
         Integrator integrator = new SimpleIntegrator();
 
-        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 32);
+        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 150);
 
-        createSwingPanel(image);
-        orchestrator.render();
+        RenderPanel panel = createSwingPanel(image);
+        orchestrator.render(tile -> SwingUtilities.invokeLater(() -> panel.onTileFinished(tile)));
     }
 
-    private static void createSwingPanel(Image image) {
+    private static RenderPanel createSwingPanel(Image image) {
+        RenderPanel panel = new RenderPanel(image);
         SwingUtilities.invokeLater(() -> {
-            RenderPanel panel = new RenderPanel(image);
             JFrame frame = new JFrame("Ray Tracer");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.add(panel);
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
-
-            new Timer(100, e -> {
-                panel.updateFromFloatPixels(image.getPixels());
-                panel.repaint();
-            }).start();
         });
+        return panel;
     }
 
     private static Scene getSceneZZZ(Camera camera) {

@@ -1,6 +1,7 @@
 package org.example.swing;
 
 import org.example.Image;
+import org.example.TileOrchestrator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +15,7 @@ import java.awt.image.WritableRaster;
 
 public class RenderPanel extends JPanel {
     private final int[] pixels;
+    private final Image image;
     private final BufferedImage bufferedImage;
     private final int width;
     private final int height;
@@ -21,7 +23,8 @@ public class RenderPanel extends JPanel {
     public RenderPanel(Image image) {
         this.width = image.getImageWidth();
         this.height = image.getImageHeight();
-        this.pixels = new int[this.width * this.height * 3];
+        this.pixels = new int[this.width * this.height];
+        this.image = image;
 
         DataBuffer buffer = new DataBufferInt(pixels, pixels.length);
 
@@ -50,16 +53,23 @@ public class RenderPanel extends JPanel {
         ));
     }
 
-    public void updateFromFloatPixels(float[] hdr) {
-        for (int i = 0; i < width * height; i++) {
-            int base = i * 3;
+    public void updateFromFloatPixels(TileOrchestrator.Tile tile, float[] hdr) {
+        for (int j = tile.startY() - 1; j >= tile.endY(); j--) {
+            for (int i = tile.startX(); i < tile.endX(); i++) {
+                int base = ((j * width) + i);
+                int ir = Image.transformColour(hdr[3 * base]);
+                int ig = Image.transformColour(hdr[3 * base + 1]);
+                int ib = Image.transformColour(hdr[3 * base + 2]);
 
-            int ir = Image.transformColour(hdr[base]);
-            int ig = Image.transformColour(hdr[base + 1]);
-            int ib = Image.transformColour(hdr[base + 2]);
-
-            pixels[i] = (ir << 16) | (ig << 8) | ib;
+                pixels[base] = (ir << 16) | (ig << 8) | ib;
+            }
         }
+    }
+
+    public void onTileFinished(TileOrchestrator.Tile tile) {
+        System.out.println("Tile finished: " + tile);
+        updateFromFloatPixels(tile, image.getPixels());
+        repaint();
     }
 
     @Override
