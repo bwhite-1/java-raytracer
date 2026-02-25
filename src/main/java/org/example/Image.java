@@ -12,16 +12,16 @@ public class Image {
     private final int imageHeight;
     private final float aspectRatio;
     private final int samplesPerPixel;
-    private final Colour[] colour;
+    private final float[] colour;
 
     public Image(int imageWidth, float aspectRatio, int samplesPerPixel) {
         this.imageWidth = imageWidth;
         this.aspectRatio = aspectRatio;
         this.imageHeight = (int) (imageWidth / aspectRatio);
         this.samplesPerPixel = samplesPerPixel;
-        colour = new Colour[imageWidth * imageHeight];
-        for (int i = 0; i < (imageWidth * imageHeight); i++) {
-            colour[i] = new Colour(0f, 0f, 0f);
+        colour = new float[imageWidth * imageHeight * 3];
+        for (int i = 0; i < (imageWidth * imageHeight * 3); i++) {
+            colour[i] = 0;
         }
     }
 
@@ -49,23 +49,25 @@ public class Image {
     }
 
     public void addColour(int x, int y, Colour c) {
-        colour[getIndex(x, y)] = colour[getIndex(x, y)].add(c.divide(samplesPerPixel));
+        colour[getIndex(x, y)] += c.r() / samplesPerPixel;
+        colour[getIndex(x, y) + 1] += c.g() / samplesPerPixel;
+        colour[getIndex(x, y) + 2] += c.b() / samplesPerPixel;
     }
 
     private float redAt(int x, int y) {
-        return colour[getIndex(x, y)].r();
+        return colour[getIndex(x, y)];
     }
 
     private float greenAt(int x, int y) {
-        return colour[getIndex(x, y)].g();
+        return colour[getIndex(x, y) + 1];
     }
 
     private float blueAt(int x, int y) {
-        return colour[getIndex(x, y)].b();
+        return colour[getIndex(x, y) + 2];
     }
 
     private int getIndex(int x, int y) {
-        return (y * imageWidth) + x;
+        return 3 * ((y * imageWidth) + x);
     }
 
     private float clamp(float v) {
