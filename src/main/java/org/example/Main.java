@@ -6,8 +6,6 @@ import org.example.accelerationstructure.RandomMedianSplit;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
-import org.example.core.Interval;
-import org.example.core.Ray;
 import org.example.hittable.Hittable;
 import org.example.hittable.Sphere;
 import org.example.integrator.DebugIntegrator;
@@ -18,7 +16,9 @@ import org.example.material.Metal;
 import org.example.material.Plastic;
 import org.example.core.Vec3;
 import org.example.parser.ObjParser;
+import org.example.swing.RenderPanel;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +36,27 @@ public class Main {
         Scene scene = getScene(camera);
         Integrator integrator = new SimpleIntegrator();
 
-        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 150);
+        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 32);
+
+        createSwingPanel(image);
         orchestrator.render();
+    }
+
+    private static void createSwingPanel(Image image) {
+        SwingUtilities.invokeLater(() -> {
+            RenderPanel panel = new RenderPanel(image);
+            JFrame frame = new JFrame("Ray Tracer");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.add(panel);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+
+            new Timer(100, e -> {
+                panel.updateFromFloatPixels(image.getPixels());
+                panel.repaint();
+            }).start();
+        });
     }
 
     private static Scene getSceneZZZ(Camera camera) {
