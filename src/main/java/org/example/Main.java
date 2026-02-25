@@ -21,11 +21,13 @@ import org.example.swing.RenderPanel;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Image image = new Image(800, 16.0f/9.0f, 10);
         Camera camera = Camera.builder()
                 .lookFrom(new Vec3(100, 0, -100))
@@ -41,7 +43,10 @@ public class Main {
         TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, sampler, 64);
 
         RenderPanel panel = createSwingPanel(image);
+        Instant startTime = Instant.now();
         orchestrator.render(tile -> SwingUtilities.invokeLater(() -> panel.onTileFinished(tile)));
+        Instant endTime = Instant.now();
+        System.out.println("Render finished: " + Duration.between(startTime, endTime));
     }
 
     private static RenderPanel createSwingPanel(Image image) {
