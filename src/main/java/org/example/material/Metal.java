@@ -4,6 +4,7 @@ import org.example.core.Colour;
 import org.example.core.Intersection;
 import org.example.core.Ray;
 import org.example.core.Vec3;
+import org.example.sampler.Sampler;
 
 public class Metal implements Material {
 
@@ -20,11 +21,12 @@ public class Metal implements Material {
             Ray rayIn,
             Intersection intersection,
             Colour attenuation,
-            Ray scattered
+            Ray scattered,
+            Sampler sampler
     ) {
         Vec3 reflectedDirection = rayIn.direction().reflect(intersection.getNormal());
         Vec3 fuzzed = reflectedDirection
-                .add(Vec3.randomUnitVector().multiply(fuzziness))
+                .add(Vec3.randomUnitVector(sampler).multiply(fuzziness))
                 .normalize();
         scattered.replace(intersection.getPosition(), fuzzed);
         attenuation.replace(albedo);

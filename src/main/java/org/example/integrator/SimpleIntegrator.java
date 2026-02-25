@@ -6,9 +6,10 @@ import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.core.Vec3;
+import org.example.sampler.Sampler;
 
 public class SimpleIntegrator implements Integrator {
-    public Colour li(Ray ray, Scene scene, Interval interval, int depth) {
+    public Colour li(Ray ray, Scene scene, Interval interval, Sampler sampler, int depth) {
         if (depth <= 0) {
             return new Colour(1, 1, 1);
         }
@@ -16,8 +17,8 @@ public class SimpleIntegrator implements Integrator {
         if (intersection != null) {
             Ray scattered = new Ray(new Vec3(), new Vec3());
             Colour attenuation = new Colour(0, 0, 0);
-            if (intersection.getMaterial().scatter(ray, intersection, attenuation, scattered)) {
-                return attenuation.multiply(li(scattered, scene, new Interval(0.001f, interval.getMax()), depth - 1));
+            if (intersection.getMaterial().scatter(ray, intersection, attenuation, scattered, sampler)) {
+                return attenuation.multiply(li(scattered, scene, new Interval(0.001f, interval.getMax()), sampler, depth - 1));
             }
             return new Colour(0, 0, 0);
         }

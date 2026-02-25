@@ -1,5 +1,7 @@
 package org.example.core;
 
+import org.example.sampler.Sampler;
+
 public record Vec3(float x, float y, float z) {
 
     public Vec3() {
@@ -83,22 +85,13 @@ public record Vec3(float x, float y, float z) {
         );
     }
 
-    public static Vec3 randomUnitVector() {
+    public static Vec3 randomUnitVector(Sampler sampler) {
         while (true) {
-            Vec3 p = Vec3.random();
+            Vec3 p = sampler.nextVec3();
             float lengthSquared = p.lengthSquared();
             if (lengthSquared > 1e-80 && lengthSquared <= 1) {
                 return p.divide(lengthSquared);
             }
-        }
-    }
-
-    public static Vec3 randomOnHemisphere(Vec3 normal) {
-        Vec3 randomUnitVector = randomUnitVector();
-        if (Vec3.dot(randomUnitVector, normal) > 0) {
-            return randomUnitVector;
-        } else {
-            return randomUnitVector.negate();
         }
     }
 

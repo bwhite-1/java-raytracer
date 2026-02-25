@@ -4,29 +4,30 @@ import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.integrator.Integrator;
+import org.example.sampler.Sampler;
 
 import java.io.IOException;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.Consumer;
 
 public class TileOrchestrator {
     private final Image image;
     private final Scene scene;
     private final Integrator integrator;
+    private final Sampler sampler;
     private final Deque<Tile> tilesToRender;
     private final ExecutorService executorService;
 
     private final int tileSize;
 
-    public TileOrchestrator(Image image, Scene scene, Integrator integrator, int tileSize) {
+    public TileOrchestrator(Image image, Scene scene, Integrator integrator, Sampler sampler, int tileSize) {
         this.image = image;
         this.scene = scene;
         this.integrator = integrator;
+        this.sampler = sampler;
         this.tileSize = tileSize;
         this.tilesToRender = new ConcurrentLinkedDeque<>();
         this.executorService = Executors.newFixedThreadPool(4);
@@ -56,10 +57,10 @@ public class TileOrchestrator {
         for (int j = tile.startY() - 1; j >= tile.endY(); j--) {
             for (int i = tile.startX(); i < tile.endX(); i++) {
                 for (int s = 0; s < image.getSamplesPerPixel(); s++) {
-                    float u = (float) (i + Math.random()) / (image.getImageWidth() -1);
-                    float v = (float) (image.getImageHeight() - 1 - (j + Math.random())) / (image.getImageHeight() - 1);
+                    float u = (i + sampler.next1D()) / (image.getImageWidth() -1);
+                    float v = (image.getImageHeight() - 1 - (j + sampler.next1D())) / (image.getImageHeight() - 1);
                     Ray ray = scene.camera().getRay(u, v);
-                    Colour pixelColour = integrator.li(ray, scene, new Interval(), 5);
+                    Colour pixelColour = integrator.li(ray, scene, new Interval(), sampler, 5);
                     image.addColour(i, j, pixelColour);
                 }
             }

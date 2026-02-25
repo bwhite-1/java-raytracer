@@ -67,7 +67,6 @@ public class RenderPanel extends JPanel {
     }
 
     public void onTileFinished(TileOrchestrator.Tile tile) {
-        System.out.println("Tile finished: " + tile);
         updateFromFloatPixels(tile, image.getPixels());
         repaint();
     }

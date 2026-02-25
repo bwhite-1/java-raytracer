@@ -15,6 +15,8 @@ import org.example.material.Metal;
 import org.example.material.Plastic;
 import org.example.core.Vec3;
 import org.example.parser.ObjParser;
+import org.example.sampler.BasicSampler;
+import org.example.sampler.Sampler;
 import org.example.swing.RenderPanel;
 
 import javax.swing.*;
@@ -34,8 +36,9 @@ public class Main {
                 .build();
         Scene scene = getScene(camera);
         Integrator integrator = new SimpleIntegrator();
+        Sampler sampler = new BasicSampler();
 
-        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, 64);
+        TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, sampler, 64);
 
         RenderPanel panel = createSwingPanel(image);
         orchestrator.render(tile -> SwingUtilities.invokeLater(() -> panel.onTileFinished(tile)));
