@@ -6,8 +6,10 @@ import org.example.core.Ray;
 import org.example.core.Aabb;
 import org.example.hittable.Hittable;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 public class BvhNode implements Hittable {
     private final Aabb box;
@@ -21,7 +23,7 @@ public class BvhNode implements Hittable {
             SplitHeuristic heuristic
     ) {
         int span = end - start;
-        SplitHeuristic.SplitResult split = heuristic.findSplit(objects, start, end);
+        SplitHeuristic.SplitPlan split = heuristic.findSplit(objects, start, end);
 
         if (split.makeLeaf()) {
             if (span == 1) {
@@ -31,7 +33,7 @@ public class BvhNode implements Hittable {
                 right = objects.get(start + 1);
             }
         } else {
-            int mid = split.mid();
+            int mid = partition(objects, start, end, split.sideOf());
             left = new BvhNode(objects, start, mid, heuristic);
             right = new BvhNode(objects, mid, end, heuristic);
         }
@@ -55,5 +57,27 @@ public class BvhNode implements Hittable {
     @Override
     public Aabb boundingBox() {
         return box;
+    }
+
+    private int partition(
+            List<? extends Hittable> objects,
+            int start,
+            int end,
+            ToIntFunction<Hittable> sideOf
+    ) {
+        int i = start;
+        int j = end - 1;
+
+        while (i <= j) {
+            while (i <= j && sideOf.applyAsInt(objects.get(i)) == 0) i++;
+            while (i <= j && sideOf.applyAsInt(objects.get(j)) == 1) j--;
+
+            if (i < j) {
+                Collections.swap(objects, i, j);
+                i++;
+                j--;
+            }
+        }
+        return i;
     }
 }

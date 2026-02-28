@@ -3,13 +3,13 @@ package org.example.accelerationstructure;
 import org.example.hittable.Hittable;
 
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 public interface SplitHeuristic {
-    record SplitResult(
-            int axis,
-            int mid,
+    record SplitPlan(
+            ToIntFunction<Hittable> sideOf,
             boolean makeLeaf
     ) {}
 
-    SplitResult findSplit(List<? extends Hittable> objects, int start, int end);
+    SplitPlan findSplit(List<? extends Hittable> objects, int start, int end);
 }
