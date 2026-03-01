@@ -31,16 +31,16 @@ public class BvhAggregate implements AccelerationStructure {
             Ray ray,
             Interval rayT
     ) {
-        if (!node.box.hit(ray, new Interval(rayT.getMin(), rayT.getMax()))) {
+        if (!node.box().hit(ray, new Interval(rayT.getMin(), rayT.getMax()))) {
             return null;
         }
 
-        if (node.isLeaf) {
+        if (node.isLeaf()) {
             Intersection closestHit = null;
             float closestT = rayT.getMax();
 
-            for (int i = 0; i < node.primitiveCount; i++) {
-                Hittable prim = primitives[node.firstPrimitiveOffset + i];
+            for (int i = 0; i < node.primitiveCount(); i++) {
+                Hittable prim = primitives[node.firstPrimitiveOffset() + i];
                 Intersection hit = prim.hit(ray, new Interval(rayT.getMin(), closestT));
                 if (hit != null && hit.getT() < closestT) {
                     closestHit = hit;
@@ -51,9 +51,9 @@ public class BvhAggregate implements AccelerationStructure {
             return closestHit;
         }
 
-        Intersection leftHit = hitNode(node.getLeft(), ray, rayT);
+        Intersection leftHit = hitNode(node.left(), ray, rayT);
         Interval rightInterval = new Interval(rayT.getMin(), leftHit == null ? rayT.getMax() : leftHit.getT());
-        Intersection rightHit = hitNode(node.getRight(), ray, rightInterval);
+        Intersection rightHit = hitNode(node.right(), ray, rightInterval);
 
         // Return the closer hit, if any
         if (leftHit == null) return rightHit;

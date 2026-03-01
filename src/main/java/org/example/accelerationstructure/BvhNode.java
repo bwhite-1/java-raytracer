@@ -1,35 +1,19 @@
 package org.example.accelerationstructure;
 
-import lombok.Getter;
 import org.example.core.Aabb;
 
-@Getter
-public class BvhNode {
-    Aabb box;
-
+public record BvhNode(
+    Aabb box,
     // interior node
-    BvhNode left;
-    BvhNode right;
-    int axis;
-
+    BvhNode left,
+    BvhNode right,
+    int axis,
     // leaf node
-    int firstPrimitiveOffset;
-    int primitiveCount;
-
-    boolean isLeaf;
-
-    private BvhNode(Aabb box, BvhNode left, BvhNode right, int axis, int firstPrimitiveOffset, int primitiveCount, boolean isLeaf) {
-        this.box = box;
-        this.left = left;
-        this.right = right;
-        this.axis = axis;
-        this.firstPrimitiveOffset = firstPrimitiveOffset;
-        this.primitiveCount = primitiveCount;
-        this.isLeaf = isLeaf;
-    }
-
+    int firstPrimitiveOffset,
+    int primitiveCount,
+    boolean isLeaf
+) {
     static BvhNode leaf(Aabb box, int firstPrimOffset, int primCount) {
-        System.out.printf("Leaf[firstPrimOffset=%s, primCount=%s]%n", firstPrimOffset, primCount);
         return new BvhNode(
                 box,
                 null,
