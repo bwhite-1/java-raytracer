@@ -9,7 +9,7 @@ import org.example.core.Ray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NaiveAccelerationStructure implements Hittable {
+public class NaiveAccelerationStructure implements AccelerationStructure {
     private final List<? extends Hittable> hittableList;
 
     public NaiveAccelerationStructure(List<? extends Hittable> hittableList) {

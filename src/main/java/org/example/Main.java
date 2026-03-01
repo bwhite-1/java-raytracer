@@ -1,17 +1,20 @@
 package org.example;
 
-import org.example.accelerationstructure.BvhNode;
-import org.example.accelerationstructure.NaiveAccelerationStructure;
+import org.example.accelerationstructure.AccelerationStructure;
+import org.example.accelerationstructure.BvhBuilder;
 import org.example.accelerationstructure.RandomMedianSplit;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
 import org.example.hittable.Hittable;
+import org.example.hittable.Mesh;
 import org.example.hittable.Sphere;
+import org.example.hittable.Triangle;
 import org.example.integrator.DebugIntegrator;
 import org.example.integrator.Integrator;
 import org.example.integrator.SimpleIntegrator;
 import org.example.material.Lambertian;
+import org.example.material.Material;
 import org.example.material.Metal;
 import org.example.material.Plastic;
 import org.example.core.Vec3;
@@ -30,14 +33,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         Image image = new Image(800, 16.0f/9.0f, 5);
-        Camera camera = Camera.builder()
-                .lookFrom(new Vec3(100, 0, -100))
-                .lookAt(new Vec3(0, 0, 25))
-                .vUp(new Vec3(0, 1, 0))
-                .vfov(65)
-                .aspectRatio(16.0f/9.0f)
-                .build();
-        Scene scene = getScene(camera);
+        Scene scene = getScene();
         Integrator integrator = new SimpleIntegrator();
         Sampler sampler = new BasicSampler();
 
@@ -63,25 +59,60 @@ public class Main {
         return panel;
     }
 
-    private static Scene getSceneZZZ(Camera camera) {
-        Sphere sphere1 = new Sphere(new Vec3(-1, 0, -1), 0.5f, new Metal(0.01f, new Colour(0.8f, 0.6f, 0.6f)));
-        Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Plastic(new Colour(0.8f, 0.2f, 0.2f), 0.02f, 1.5f));
-        Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Metal(0.9f, new Colour(0.8f, 0.6f, 0.2f)));
-        Sphere sphere4 = new Sphere(new Vec3(0, -100.5f, -1), 100, new Lambertian(new Colour(0.2f, 0.2f, 0.2f)));
+//    private static Scene getRtiowTestScene(Camera camera) {
+//        Sphere sphere1 = new Sphere(new Vec3(-1, 0, -1), 0.5f, new Metal(0.01f, new Colour(0.8f, 0.6f, 0.6f)));
+//        Sphere sphere2 = new Sphere(new Vec3(0, 0, -1.2f), 0.5f, new Plastic(new Colour(0.8f, 0.2f, 0.2f), 0.02f, 1.5f));
+//        Sphere sphere3 = new Sphere(new Vec3(1, 0, -1), 0.5f, new Metal(0.9f, new Colour(0.8f, 0.6f, 0.2f)));
+//        Sphere sphere4 = new Sphere(new Vec3(0, -100.5f, -1), 100, new Lambertian(new Colour(0.2f, 0.2f, 0.2f)));
+//        Background background = new Sky(
+//                new Colour(0.2f, 0.3f, 0.5f),
+//                new Colour(1, 1, 1)
+//        );
+//        Hittable accelerationStructure = new NaiveAccelerationStructure( List.of(sphere1, sphere2, sphere3, sphere4));
+//        return new Scene(accelerationStructure, background, camera);
+//    }
+
+    private static Scene getFourSphereTestScene() {
+        Camera cam = Camera.builder()
+                .lookFrom(new Vec3(0, 0, 10))
+                .lookAt(new Vec3(0, 0,0 ))
+                .vUp(new Vec3(0, 1, 0))
+                .vfov(100)
+                .aspectRatio(1)
+                .build();
+
+
+        Material mat = new Lambertian(new Colour(0.2f, 0.2f, 0.2f));
+        Sphere s1 = new Sphere(new Vec3(5, 5, 0), 5, mat);
+        Sphere s2 = new Sphere(new Vec3(-5, 5, 0), 5, mat);
+        Sphere s3 = new Sphere(new Vec3(5, -5, 0), 5, mat);
+        Sphere s4 = new Sphere(new Vec3(-5, -5, 0), 5, mat);
+
+        List<Hittable> world = List.of(s1, s2, s3, s4);
+
         Background background = new Sky(
                 new Colour(0.2f, 0.3f, 0.5f),
                 new Colour(1, 1, 1)
         );
-        Hittable accelerationStructure = new NaiveAccelerationStructure( List.of(sphere1, sphere2, sphere3, sphere4));
-        return new Scene(accelerationStructure, background, camera);
+        AccelerationStructure tlas = new BvhBuilder(
+                world.toArray(new Hittable[0]),
+                2,
+                new RandomMedianSplit()).build();
+
+        return new Scene(tlas, background, cam);
     }
 
-    private static Scene getScene(Camera camera) throws IOException {
+    private static Scene getScene() throws IOException {
         ObjParser objParser = new ObjParser();
-        Hittable mesh = objParser.parseObjFile(
+        Mesh mesh = (Mesh) objParser.parseObjFile(
                 "src/main/resources/obj/xyzrgb_dragon.obj",
                 new Plastic(new Colour(0.2f, 0.2f, 0.3f), 0.005f, 1.5f),
                 false);
+        mesh.setAccelerationStructure(
+                new BvhBuilder(
+                        mesh.getTris().toArray(new Triangle[0]),
+                        2,
+                        new RandomMedianSplit()).build());
 
         List<Hittable> world = new ArrayList<>();
         world.add(mesh);
@@ -90,16 +121,24 @@ public class Main {
                 new Lambertian(new Colour(0.1f, 0.1f, 0.1f)))
         );
 
-        Hittable accelerationStructure = new BvhNode(
-                world,
-                0,
-                world.size(),
-                new RandomMedianSplit()
-        );
+        AccelerationStructure tlas = new BvhBuilder(
+                world.toArray(new Hittable[0]),
+                2,
+                new RandomMedianSplit()).build();
+
         Background background = new Sky(
                 new Colour(0.2f, 0.3f, 0.8f),
                 new Colour(0.6f, 0.7f, 0.8f)
         );
-        return new Scene(accelerationStructure, background, camera);
+
+        Camera camera = Camera.builder()
+                .lookFrom(new Vec3(100, 0, -100))
+                .lookAt(new Vec3(0, 0, 25))
+                .vUp(new Vec3(0, 1, 0))
+                .vfov(65)
+                .aspectRatio(16.0f/9.0f)
+                .build();
+
+        return new Scene(tlas, background, camera);
     }
 }

@@ -39,8 +39,12 @@ public class TileOrchestrator {
         for (int i = 0; i < getNumberOfTiles(); i++) {
             Tile tile = getTile(i);
             tasks.add(() -> {
-                renderTile(tile);
-                onTileFinished.accept(tile);
+                try {
+                    renderTile(tile);
+                    onTileFinished.accept(tile);
+                } catch (Exception e) {
+                    System.out.print(e.getMessage());
+                }
                 return null;
             });
         }

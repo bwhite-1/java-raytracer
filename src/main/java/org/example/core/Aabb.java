@@ -1,8 +1,10 @@
 package org.example.core;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class Aabb {
     private final Vec3 min;
     private final Vec3 max;
