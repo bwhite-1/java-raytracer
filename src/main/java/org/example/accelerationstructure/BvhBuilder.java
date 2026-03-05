@@ -1,5 +1,6 @@
 package org.example.accelerationstructure;
 
+import lombok.Getter;
 import org.example.core.Aabb;
 import org.example.hittable.Hittable;
 
@@ -10,21 +11,25 @@ public class BvhBuilder {
     private final Hittable[] primitives;
     private final int maxLeafSize;
     private final SplitHeuristic splitHeuristic;
+    @Getter
+    private int leafCount;
 
     public BvhBuilder(Hittable[] primitives, int maxLeafSize, SplitHeuristic splitHeuristic) {
         this.primitives = primitives;
         this.maxLeafSize = maxLeafSize;
         this.splitHeuristic = splitHeuristic;
+        this.leafCount = 0;
     }
 
     public BvhAggregate build() {
-        return new BvhAggregate(build(0, primitives.length), primitives);
+        return new BvhAggregate(build(0, primitives.length), primitives, leafCount);
     }
 
     private BvhNode build(int start, int end) {
         Aabb boundingBox = computeBoundingBox(start, end);
         int span = end - start;
         if (span <= maxLeafSize) {
+            leafCount++;
             return BvhNode.leaf(boundingBox, start, span);
         }
 
@@ -34,6 +39,7 @@ public class BvhBuilder {
 
         if (mid == start || mid == end) {
             // all nodes on one side
+            leafCount++;
             return BvhNode.leaf(boundingBox, start, span);
         }
 

@@ -1,7 +1,10 @@
 package org.example;
 
 import org.example.accelerationstructure.AccelerationStructure;
+import org.example.accelerationstructure.BvhAggregate;
 import org.example.accelerationstructure.BvhBuilder;
+import org.example.accelerationstructure.LinearBvhAggregate;
+import org.example.accelerationstructure.LinearBvhBuilder;
 import org.example.accelerationstructure.RandomMedianSplit;
 import org.example.background.Background;
 import org.example.background.Sky;
@@ -32,7 +35,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Image image = new Image(800, 16.0f/9.0f, 5);
+        Image image = new Image(2, 16.0f/9.0f, 1);
         Scene scene = getScene();
         Integrator integrator = new SimpleIntegrator();
         Sampler sampler = new BasicSampler();
@@ -108,11 +111,13 @@ public class Main {
                 "src/main/resources/obj/xyzrgb_dragon.obj",
                 new Plastic(new Colour(0.2f, 0.2f, 0.3f), 0.005f, 1.5f),
                 false);
-        mesh.setAccelerationStructure(
-                new BvhBuilder(
-                        mesh.getTris().toArray(new Triangle[0]),
-                        2,
-                        new RandomMedianSplit()).build());
+        Hittable[] meshTris = mesh.getTris().toArray(new Triangle[0]);
+        BvhAggregate meshTreeBvh = new BvhBuilder(
+                meshTris,
+                2,
+                new RandomMedianSplit()).build();
+        LinearBvhAggregate meshLinearBvh = new LinearBvhBuilder(meshTreeBvh, meshTris).build();
+        mesh.setAccelerationStructure(meshLinearBvh);
 
         List<Hittable> world = new ArrayList<>();
         world.add(mesh);

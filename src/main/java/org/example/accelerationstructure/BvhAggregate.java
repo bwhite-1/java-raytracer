@@ -1,5 +1,6 @@
 package org.example.accelerationstructure;
 
+import lombok.Getter;
 import org.example.core.Aabb;
 import org.example.core.Intersection;
 import org.example.core.Interval;
@@ -8,12 +9,16 @@ import org.example.hittable.Hittable;
 
 public class BvhAggregate implements AccelerationStructure {
 
+    @Getter
     private final BvhNode root;
     private final Hittable[] primitives;
+    @Getter
+    private final int leafCount;
 
-    public BvhAggregate(BvhNode root, Hittable[] primitives) {
+    public BvhAggregate(BvhNode root, Hittable[] primitives, int nodeCount) {
         this.root = root;
         this.primitives = primitives;
+        this.leafCount = nodeCount;
     }
 
     @Override
