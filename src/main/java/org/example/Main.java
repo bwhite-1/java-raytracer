@@ -5,7 +5,10 @@ import org.example.accelerationstructure.BvhAggregate;
 import org.example.accelerationstructure.BvhBuilder;
 import org.example.accelerationstructure.LinearBvhAggregate;
 import org.example.accelerationstructure.LinearBvhBuilder;
+import org.example.accelerationstructure.NaiveAccelerationStructure;
+import org.example.accelerationstructure.PackedBvhAggregate;
 import org.example.accelerationstructure.RandomMedianSplit;
+import org.example.accelerationstructure.SplitHeuristic;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
@@ -45,6 +48,7 @@ public class Main {
         RenderPanel panel = createSwingPanel(image);
         Instant startTime = Instant.now();
         orchestrator.render(tile -> SwingUtilities.invokeLater(() -> panel.onTileFinished(tile)));
+        //orchestrator.render(tile -> {});
         Instant endTime = Instant.now();
         System.out.println("Render finished: " + Duration.between(startTime, endTime));
     }
@@ -112,12 +116,13 @@ public class Main {
                 new Plastic(new Colour(129f/255, 195f/255, 143f/255), 0.005f, 1.5f),
                 false);
         Hittable[] meshTris = mesh.getTris().toArray(new Triangle[0]);
-        BvhAggregate meshTreeBvh = new BvhBuilder(
+        AccelerationStructure accelerationStructure = generateAccelerationStructure(
                 meshTris,
+                new RandomMedianSplit(),
                 2,
-                new RandomMedianSplit()).build();
-        LinearBvhAggregate meshLinearBvh = new LinearBvhBuilder(meshTreeBvh, meshTris).build();
-        mesh.setAccelerationStructure(meshLinearBvh);
+                AccelerationStructureType.LINEAR_PACKED
+        );
+        mesh.setAccelerationStructure(accelerationStructure);
 
         List<Hittable> world = new ArrayList<>();
         world.add(mesh);
@@ -145,5 +150,32 @@ public class Main {
                 .build();
 
         return new Scene(tlas, background, camera);
+    }
+
+    enum AccelerationStructureType {
+        NAIVE, TREE, LINEAR, LINEAR_PACKED
+    }
+
+    static AccelerationStructure generateAccelerationStructure(
+            Hittable[] primitives,
+            SplitHeuristic splitHeuristic,
+            int maxLeafSize,
+            AccelerationStructureType type) {
+        if (type == AccelerationStructureType.NAIVE) {
+            return new NaiveAccelerationStructure(List.of(primitives));
+        }
+        BvhAggregate treeBvh = new BvhBuilder(primitives, maxLeafSize, splitHeuristic).build();
+        if (type == AccelerationStructureType.TREE) {
+            return treeBvh;
+        }
+        LinearBvhAggregate linearBvh = new LinearBvhBuilder(treeBvh, primitives).build();
+        if (type == AccelerationStructureType.LINEAR) {
+            return linearBvh;
+        }
+        PackedBvhAggregate packedBvh = new PackedBvhAggregate(linearBvh.getNodes(), primitives);
+        if (type == AccelerationStructureType.LINEAR_PACKED) {
+            return packedBvh;
+        }
+        return null;
     }
 }
