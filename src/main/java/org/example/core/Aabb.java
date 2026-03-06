@@ -34,6 +34,51 @@ public class Aabb {
         return true;
     }
 
+    public static boolean hit(
+            Ray ray,
+            float tMin, float tMax,
+            float minX, float maxX,
+            float minY, float maxY,
+            float minZ, float maxZ) {
+
+        float ox = ray.origin().get(0);
+        float oy = ray.origin().get(1);
+        float oz = ray.origin().get(2);
+
+        float t0 = (minX - ox) * ray.invDirX();
+        float t1 = (maxX - ox) * ray.invDirX();
+
+        if (ray.invDirX() < 0) {
+            float tmp = t0; t0 = t1; t1 = tmp;
+        }
+
+        tMin = Math.max(t0, tMin);
+        tMax = Math.min(t1, tMax);
+        if (tMax <= tMin) return false;
+
+        t0 = (minY - oy) * ray.invDirY();
+        t1 = (maxY - oy) * ray.invDirY();
+
+        if (ray.invDirY() < 0) {
+            float tmp = t0; t0 = t1; t1 = tmp;
+        }
+
+        tMin = Math.max(t0, tMin);
+        tMax = Math.min(t1, tMax);
+        if (tMax <= tMin) return false;
+
+        t0 = (minZ - oz) * ray.invDirZ();
+        t1 = (maxZ - oz) * ray.invDirZ();
+
+        if (ray.invDirZ() < 0) {
+            float tmp = t0; t0 = t1; t1 = tmp;
+        }
+
+        tMin = Math.max(t0, tMin);
+        tMax = Math.min(t1, tMax);
+        return tMax > tMin;
+    }
+
     public static Aabb surroundingBox(Aabb box0, Aabb box1) {
         Vec3 small = new Vec3(
                 Math.min(box0.min.x(), box1.min.x()),

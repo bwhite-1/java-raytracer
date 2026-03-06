@@ -35,7 +35,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Image image = new Image(2, 16.0f/9.0f, 1);
+        Image image = new Image(800, 16.0f/9.0f, 50);
         Scene scene = getScene();
         Integrator integrator = new SimpleIntegrator();
         Sampler sampler = new BasicSampler();
@@ -109,7 +109,7 @@ public class Main {
         ObjParser objParser = new ObjParser();
         Mesh mesh = (Mesh) objParser.parseObjFile(
                 "src/main/resources/obj/xyzrgb_dragon.obj",
-                new Plastic(new Colour(0.2f, 0.2f, 0.3f), 0.005f, 1.5f),
+                new Plastic(new Colour(129f/255, 195f/255, 143f/255), 0.005f, 1.5f),
                 false);
         Hittable[] meshTris = mesh.getTris().toArray(new Triangle[0]);
         BvhAggregate meshTreeBvh = new BvhBuilder(

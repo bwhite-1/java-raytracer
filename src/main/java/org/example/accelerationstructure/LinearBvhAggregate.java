@@ -4,6 +4,7 @@ import org.example.core.Aabb;
 import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.core.Ray;
+import org.example.core.Vec3;
 import org.example.hittable.Hittable;
 
 public class LinearBvhAggregate implements AccelerationStructure {
@@ -22,7 +23,6 @@ public class LinearBvhAggregate implements AccelerationStructure {
         float closestT = rayT.getMax();
         int[] stack = new int[64];
         int stackPtr = 0;
-        int count = 0;
 
         boolean isXDirNegative = ray.direction().get(0) < 0;
         boolean isYDirNegative = ray.direction().get(1) < 0;
@@ -33,9 +33,7 @@ public class LinearBvhAggregate implements AccelerationStructure {
                 throw new RuntimeException("Stack depth exceeded!");
             }
             LinearBvhNode node = nodes[current];
-            if (node.boundingBox.hit(ray, new Interval(rayT.getMin(), closestT))) {
-                count++;
-
+            if(Aabb.hit(ray, rayT.getMin(), closestT, node.minX, node.maxX, node.minY, node.maxY, node.minZ, node.maxZ)) {
                 if (node.primitiveCount > 0) {
                     // leaf
                     for (int i = 0; i < node.primitiveCount; i++) {
@@ -72,12 +70,15 @@ public class LinearBvhAggregate implements AccelerationStructure {
                 current = stack[--stackPtr];
             }
         }
-        System.out.println("count: " + count);
         return closestHit;
     }
 
     @Override
     public Aabb boundingBox() {
-        return nodes[0].boundingBox;
+        LinearBvhNode root = nodes[0];
+        return new Aabb(
+                new Vec3(root.minX, root.minY, root.minZ),
+                new Vec3(root.maxX, root.maxY, root.maxZ)
+        );
     }
 }

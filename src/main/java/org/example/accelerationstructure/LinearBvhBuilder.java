@@ -1,5 +1,6 @@
 package org.example.accelerationstructure;
 
+import org.example.core.Aabb;
 import org.example.hittable.Hittable;
 
 public class LinearBvhBuilder {
@@ -24,7 +25,7 @@ public class LinearBvhBuilder {
         int myOffset = offset++;
         LinearBvhNode linearBvhNode = new LinearBvhNode();
         linearBvhNodes[myOffset] = linearBvhNode;
-        linearBvhNode.boundingBox = node.boundingBox();
+        setBoundingBox(linearBvhNode, node);
         linearBvhNode.axis = node.axis();
         if (node.primitiveCount() > 0) {
             linearBvhNode.firstPrimitiveOffset = node.firstPrimitiveOffset();
@@ -37,5 +38,15 @@ public class LinearBvhBuilder {
             linearBvhNode.primitiveCount = 0;
         }
         return offset;
+    }
+
+    private void setBoundingBox(LinearBvhNode linearNode, BvhNode treeNode) {
+        Aabb box = treeNode.boundingBox();
+        linearNode.minX = box.getMin().x();
+        linearNode.minY = box.getMin().y();
+        linearNode.minZ = box.getMin().z();
+        linearNode.maxX = box.getMax().x();
+        linearNode.maxY = box.getMax().y();
+        linearNode.maxZ = box.getMax().z();
     }
 }
