@@ -12,6 +12,7 @@ import org.example.accelerationstructure.SplitHeuristic;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
+import org.example.hittable.DiffuseLight;
 import org.example.hittable.Hittable;
 import org.example.hittable.Mesh;
 import org.example.hittable.Sphere;
@@ -38,7 +39,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Image image = new Image(800, 16.0f/9.0f, 10);
+        Image image = new Image(800, 16.0f/9.0f, 500);
         Scene scene = getScene();
         Integrator integrator = new SimpleIntegrator();
         Sampler sampler = new BasicSampler();
@@ -130,6 +131,10 @@ public class Main {
                 10000,
                 new Lambertian(new Colour(0.1f, 0.1f, 0.1f)))
         );
+        world.add(new Sphere(new Vec3(0, 500, 0),
+                250,
+                new DiffuseLight(new Colour(2, 2, 2)))
+        );
 
         AccelerationStructure tlas = new BvhBuilder(
                 world.toArray(new Hittable[0]),
@@ -137,8 +142,8 @@ public class Main {
                 new RandomMedianSplit()).build();
 
         Background background = new Sky(
-                new Colour(0.2f, 0.3f, 0.8f),
-                new Colour(0.6f, 0.7f, 0.8f)
+                new Colour(0.2f, 0.3f, 0.8f).multiply(0.2f),
+                new Colour(0.6f, 0.7f, 0.8f).multiply(0.2f)
         );
 
         Camera camera = Camera.builder()

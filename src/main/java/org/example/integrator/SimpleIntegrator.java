@@ -11,23 +11,26 @@ import org.example.sampler.Sampler;
 public class SimpleIntegrator implements Integrator {
     public Colour li(Ray ray, Scene scene, Interval interval, Sampler sampler, int depth) {
         if (depth <= 0) {
-            return new Colour(1, 1, 1);
+            return new Colour(0, 0, 0);
         }
         Intersection intersection = scene.accelerationStructure().hit(ray, interval);
         if (intersection != null) {
             ScatterSample scatterSample = intersection.getMaterial().scatter(ray, intersection, sampler);
-            if (scatterSample != null) {
-                return scatterSample.attenuation().multiply(
+            Colour emitted = intersection.getMaterial().emitted(intersection);
+
+            if (scatterSample == null) {
+                return emitted;
+            } else {
+                return emitted.add(scatterSample.attenuation().multiply(
                         li(
-                                new Ray(intersection.getPosition(),scatterSample.direction()),
+                                new Ray(intersection.getPosition(), scatterSample.direction()),
                                 scene,
                                 new Interval(0.001f, interval.getMax()),
                                 sampler,
                                 depth - 1
                         )
-                );
+                ));
             }
-            return new Colour(0, 0, 0);
         }
         Vec3 unitDirection = ray.direction().normalize();
         return scene.background().backgroundColour(unitDirection);
