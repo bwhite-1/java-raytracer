@@ -38,7 +38,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Image image = new Image(800, 16.0f/9.0f, 50);
+        Image image = new Image(800, 16.0f/9.0f, 10);
         Scene scene = getScene();
         Integrator integrator = new SimpleIntegrator();
         Sampler sampler = new BasicSampler();

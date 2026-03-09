@@ -4,6 +4,7 @@ import org.example.core.Colour;
 import org.example.core.Intersection;
 import org.example.core.Ray;
 import org.example.core.Vec3;
+import org.example.integrator.ScatterSample;
 import org.example.sampler.Sampler;
 
 public class Lambertian implements Material {
@@ -13,11 +14,9 @@ public class Lambertian implements Material {
         this.albedo = albedo;
     }
 
-    public boolean scatter(
+    public ScatterSample scatter(
             Ray rayIn,
             Intersection intersection,
-            Colour attenuation,
-            Ray scattered,
             Sampler sampler
     ) {
         Vec3 scatterDirection = intersection.getNormal()
@@ -25,8 +24,7 @@ public class Lambertian implements Material {
         if (scatterDirection.nearZero()) {
             scatterDirection = intersection.getNormal();
         }
-        scattered.replace(intersection.getPosition(), scatterDirection);
-        attenuation.replace(albedo);
-        return true;
+
+        return new ScatterSample(scatterDirection, albedo);
     }
 }

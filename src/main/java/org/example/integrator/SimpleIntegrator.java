@@ -15,10 +15,17 @@ public class SimpleIntegrator implements Integrator {
         }
         Intersection intersection = scene.accelerationStructure().hit(ray, interval);
         if (intersection != null) {
-            Ray scattered = new Ray(new Vec3(), new Vec3());
-            Colour attenuation = new Colour(0, 0, 0);
-            if (intersection.getMaterial().scatter(ray, intersection, attenuation, scattered, sampler)) {
-                return attenuation.multiply(li(scattered, scene, new Interval(0.001f, interval.getMax()), sampler, depth - 1));
+            ScatterSample scatterSample = intersection.getMaterial().scatter(ray, intersection, sampler);
+            if (scatterSample != null) {
+                return scatterSample.attenuation().multiply(
+                        li(
+                                new Ray(intersection.getPosition(),scatterSample.direction()),
+                                scene,
+                                new Interval(0.001f, interval.getMax()),
+                                sampler,
+                                depth - 1
+                        )
+                );
             }
             return new Colour(0, 0, 0);
         }

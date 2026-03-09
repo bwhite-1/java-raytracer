@@ -4,6 +4,7 @@ import org.example.core.Colour;
 import org.example.core.Intersection;
 import org.example.core.Ray;
 import org.example.core.Vec3;
+import org.example.integrator.ScatterSample;
 import org.example.sampler.Sampler;
 
 public class Plastic implements Material {
@@ -18,18 +19,14 @@ public class Plastic implements Material {
     }
 
     @Override
-    public boolean scatter(Ray rayIn,
-                           Intersection intersection,
-                           Colour attenuation,
-                           Ray scattered,
-                           Sampler sampler) {
+    public ScatterSample scatter(Ray rayIn,
+                                 Intersection intersection,
+                                 Sampler sampler) {
         float reflectance = reflectance(rayIn, intersection);
         if (reflectance < sampler.next1D()) {
             return lambertian.scatter(
                     rayIn,
                     intersection,
-                    attenuation,
-                    scattered,
                     sampler
             );
         } else {
@@ -37,9 +34,10 @@ public class Plastic implements Material {
             Vec3 fuzzed = reflectedDirection
                     .add(Vec3.randomUnitVector(sampler).multiply(roughness))
                     .normalize();
-            scattered.replace(intersection.getPosition(), fuzzed);
-            attenuation.replace(new Colour(1,1,1).multiply(1 - reflectance));
-            return Vec3.dot(scattered.direction(), intersection.getNormal()) > 0;
+            return new ScatterSample(
+                    fuzzed,
+                    new Colour(1,1,1).multiply(1 - reflectance)
+            );
         }
     }
 
