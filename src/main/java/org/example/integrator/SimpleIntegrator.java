@@ -15,22 +15,21 @@ public class SimpleIntegrator implements Integrator {
         }
         Intersection intersection = scene.accelerationStructure().hit(ray, interval);
         if (intersection != null) {
-            ScatterSample scatterSample = intersection.getMaterial().scatter(ray, intersection, sampler);
             Colour emitted = intersection.getMaterial().emitted(intersection);
+            ScatterSample scatterSample = intersection.getMaterial().sample(ray, intersection, sampler);
 
             if (scatterSample == null) {
                 return emitted;
-            } else {
-                return emitted.add(scatterSample.attenuation().multiply(
-                        li(
-                                new Ray(intersection.getPosition(), scatterSample.direction()),
-                                scene,
-                                new Interval(0.001f, interval.getMax()),
-                                sampler,
-                                depth - 1
-                        )
-                ));
             }
+            Colour f = intersection.getMaterial().evaluate(ray, intersection, scatterSample.direction(), sampler);
+            Colour li = li(new Ray(intersection.getPosition(), scatterSample.direction()),
+                    scene,
+                    new Interval(0.001f, interval.getMax()),
+                    sampler,
+                    depth - 1
+            );
+            float cosTheta = Math.max(0, Vec3.dot(scatterSample.direction(), intersection.getNormal()));
+            return emitted.add(f.multiply(li).multiply(cosTheta/scatterSample.pdf()));
         }
         Vec3 unitDirection = ray.direction().normalize();
         return scene.background().backgroundColour(unitDirection);

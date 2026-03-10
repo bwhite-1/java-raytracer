@@ -18,27 +18,27 @@ public class Plastic implements Material {
         this.indexOfRefraction = indexOfRefraction;
     }
 
-    @Override
     public ScatterSample scatter(Ray rayIn,
                                  Intersection intersection,
                                  Sampler sampler) {
         float reflectance = reflectance(rayIn, intersection);
-        if (reflectance < sampler.next1D()) {
-            return lambertian.scatter(
-                    rayIn,
-                    intersection,
-                    sampler
-            );
-        } else {
-            Vec3 reflectedDirection = rayIn.direction().reflect(intersection.getNormal());
-            Vec3 fuzzed = reflectedDirection
-                    .add(Vec3.randomUnitVector(sampler).multiply(roughness))
-                    .normalize();
-            return new ScatterSample(
-                    fuzzed,
-                    new Colour(1,1,1).multiply(1 - reflectance)
-            );
-        }
+        return null;
+//        if (reflectance < sampler.next1D()) {
+//            return lambertian.scatter(
+//                    rayIn,
+//                    intersection,
+//                    sampler
+//            );
+//        } else {
+//            Vec3 reflectedDirection = rayIn.direction().reflect(intersection.getNormal());
+//            Vec3 fuzzed = reflectedDirection
+//                    .add(Vec3.randomUnitVector(sampler).multiply(roughness))
+//                    .normalize();
+//            return new ScatterSample(
+//                    fuzzed,
+//                    new Colour(1,1,1).multiply(1 - reflectance)
+//            );
+//        }
     }
 
     private float reflectance(

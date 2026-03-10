@@ -2,6 +2,7 @@ package org.example.material;
 
 import org.example.core.Colour;
 import org.example.core.Intersection;
+import org.example.core.OrthoNormalBasis;
 import org.example.core.Ray;
 import org.example.core.Vec3;
 import org.example.integrator.ScatterSample;
@@ -14,17 +15,33 @@ public class Lambertian implements Material {
         this.albedo = albedo;
     }
 
-    public ScatterSample scatter(
+    public ScatterSample sample(
             Ray rayIn,
             Intersection intersection,
             Sampler sampler
     ) {
-        Vec3 scatterDirection = intersection.getNormal()
-                .add(Vec3.randomUnitVector(sampler));
-        if (scatterDirection.nearZero()) {
-            scatterDirection = intersection.getNormal();
-        }
+        Vec3 local = Vec3.randomCosine(sampler);
+        Vec3 world = new OrthoNormalBasis(intersection.getNormal()).toWorld(local);
+        float pdf = pdf(rayIn, intersection, world, sampler);
+        return new ScatterSample(world, pdf);
+    }
 
-        return new ScatterSample(scatterDirection, albedo);
+    public float pdf(
+            Ray rayIn,
+            Intersection intersection,
+            Vec3 scatteredDirection,
+            Sampler sampler
+    ) {
+        float cosTheta = Math.max(0, Vec3.dot(scatteredDirection, intersection.getNormal()));
+        return (float) (cosTheta / Math.PI);
+    }
+
+    public Colour evaluate(
+            Ray rayIn,
+            Intersection intersection,
+            Vec3 scatteredDirection,
+            Sampler sampler
+    ) {
+        return albedo.divide((float) Math.PI);
     }
 }

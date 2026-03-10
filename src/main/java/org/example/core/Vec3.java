@@ -94,6 +94,19 @@ public record Vec3(float x, float y, float z) {
             }
         }
     }
+    
+    public static Vec3 randomCosine(Sampler sampler) {
+        float r1 = sampler.next1D();
+        float r2 = sampler.next1D();
+
+        float phi = (float) (2 * Math.PI * r1);
+
+        float x = (float) ( Math.cos(phi) * Math.sqrt(r2));
+        float y = (float) (Math.sin(phi) * Math.sqrt(r2));
+        float z = (float) (Math.sqrt(1 - r2));
+
+        return new Vec3(x, y, z);
+    }
 
     public boolean nearZero() {
         return Math.abs(x) < 1e-8 && Math.abs(y) < 1e-8 && Math.abs(z) < 1e-8;
