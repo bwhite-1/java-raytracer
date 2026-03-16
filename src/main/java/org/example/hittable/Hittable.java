@@ -5,8 +5,6 @@ import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.core.Ray;
 
-import java.util.List;
-
 public interface Hittable {
     Intersection hit(Ray ray, Interval rayT);
     Aabb boundingBox();

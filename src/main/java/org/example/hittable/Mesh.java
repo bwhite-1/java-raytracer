@@ -3,8 +3,6 @@ package org.example.hittable;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.accelerationstructure.AccelerationStructure;
-import org.example.accelerationstructure.BvhNode;
-import org.example.accelerationstructure.RandomMedianSplit;
 import org.example.core.Aabb;
 import org.example.core.Intersection;
 import org.example.core.Interval;
