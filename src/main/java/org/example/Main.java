@@ -20,6 +20,7 @@ import org.example.hittable.Triangle;
 import org.example.integrator.DebugIntegrator;
 import org.example.integrator.Integrator;
 import org.example.integrator.SimpleIntegrator;
+import org.example.material.Ggx;
 import org.example.material.Lambertian;
 import org.example.material.Material;
 import org.example.material.Metal;
@@ -115,7 +116,8 @@ public class Main {
         Mesh mesh = (Mesh) objParser.parseObjFile(
                 "src/main/resources/obj/xyzrgb_dragon.obj",
                 //new Plastic(new Colour(129f/255, 195f/255, 143f/255), 0.005f, 1.5f),
-                new Lambertian(new Colour(0.5f, 0.7f, 0.3f)),
+                //new Lambertian(new Colour(0.5f, 0.7f, 0.3f)),
+                new Ggx(new Colour(0.8f, 0.5f, 0.2f), 0.1f, false),
                 false);
         Hittable[] meshTris = mesh.getTris().toArray(new Triangle[0]);
         AccelerationStructure accelerationStructure = generateAccelerationStructure(

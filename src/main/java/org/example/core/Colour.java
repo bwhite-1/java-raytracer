@@ -1,8 +1,10 @@
 package org.example.core;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public final class Colour {
     private float r;
     private float g;
@@ -19,6 +21,14 @@ public final class Colour {
                 this.r() + c2.r(),
                 this.g() + c2.g(),
                 this.b() + c2.b()
+        );
+    }
+
+    public Colour subtract(Colour c2) {
+        return new Colour(
+                Math.max(this.r() - c2.r(), 0),
+                Math.max(this.g() - c2.g(), 0),
+                Math.max(this.b() - c2.b(), 0)
         );
     }
 
