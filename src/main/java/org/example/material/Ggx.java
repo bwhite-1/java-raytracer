@@ -32,8 +32,7 @@ public class Ggx implements Material {
             return null;
         }
         float pdf = pdf(rayIn, intersection, rayOutDir, sampler);
-        var out = new ScatterSample(rayOutDir, pdf);
-        return out;
+        return new ScatterSample(rayOutDir, pdf);
     }
 
     public float pdf(
@@ -42,8 +41,9 @@ public class Ggx implements Material {
             Vec3 scatteredDirection,
             Sampler sampler
     ) {
-        Vec3 h = scatteredDirection.subtract(rayIn.direction()).normalize();
-        float nDotH = Math.max(Vec3.dot(intersection.getNormal(), h), 0f);
+        Vec3 v = rayIn.direction().negate();
+        Vec3 l = scatteredDirection;
+        Vec3 h = v.add(l).normalize();        float nDotH = Math.max(Vec3.dot(intersection.getNormal(), h), 0f);
         float vDotH = Math.max(Vec3.dot(rayIn.direction().negate(), h), 0f);
         float d = d(intersection.getNormal(), h);
         return (d * nDotH) / (4f * vDotH);

@@ -24,6 +24,14 @@ public final class Colour {
         );
     }
 
+    public Colour add(float c) {
+        return new Colour(
+                this.r() + c,
+                this.g() + c,
+                this.b() + c
+        );
+    }
+
     public Colour subtract(Colour c2) {
         return new Colour(
                 Math.max(this.r() - c2.r(), 0),
@@ -72,6 +80,10 @@ public final class Colour {
 
     public float b() {
         return b;
+    }
+
+    public static Colour white() {
+        return new Colour(1f, 1f, 1f);
     }
 
 }

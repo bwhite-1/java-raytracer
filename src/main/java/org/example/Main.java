@@ -113,11 +113,15 @@ public class Main {
 
     private static Scene getScene() throws IOException {
         ObjParser objParser = new ObjParser();
+
+        Ggx ggx = new Ggx(Colour.white(), 0.1f, false);
+        Lambertian lambertian = new Lambertian(Colour.white());
+
         Mesh mesh = (Mesh) objParser.parseObjFile(
                 "src/main/resources/obj/xyzrgb_dragon.obj",
                 //new Plastic(new Colour(129f/255, 195f/255, 143f/255), 0.005f, 1.5f),
                 //new Lambertian(new Colour(0.5f, 0.7f, 0.3f)),
-                new Ggx(new Colour(0.8f, 0.5f, 0.2f), 0.1f, false),
+                ggx,
                 false);
         Hittable[] meshTris = mesh.getTris().toArray(new Triangle[0]);
         AccelerationStructure accelerationStructure = generateAccelerationStructure(
