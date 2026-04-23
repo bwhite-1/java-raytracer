@@ -24,7 +24,6 @@ import org.example.material.Ggx;
 import org.example.material.Lambertian;
 import org.example.material.Material;
 import org.example.material.Metal;
-import org.example.material.Plastic;
 import org.example.core.Vec3;
 import org.example.parser.ObjParser;
 import org.example.sampler.BasicSampler;

@@ -43,7 +43,8 @@ public class Ggx implements Material {
     ) {
         Vec3 v = rayIn.direction().negate();
         Vec3 l = scatteredDirection;
-        Vec3 h = v.add(l).normalize();        float nDotH = Math.max(Vec3.dot(intersection.getNormal(), h), 0f);
+        Vec3 h = v.add(l).normalize();
+        float nDotH = Math.max(Vec3.dot(intersection.getNormal(), h), 0f);
         float vDotH = Math.max(Vec3.dot(rayIn.direction().negate(), h), 0f);
         float d = d(intersection.getNormal(), h);
         return (d * nDotH) / (4f * vDotH);
