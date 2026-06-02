@@ -3,11 +3,13 @@ package org.example.hittable;
 import org.example.core.Aabb;
 import org.example.core.Intersection;
 import org.example.core.Interval;
+import org.example.integrator.SurfaceSample;
 import org.example.material.Material;
 import org.example.core.Ray;
 import org.example.core.Vec3;
+import org.example.sampler.Sampler;
 
-public class Sphere implements Hittable {
+public class Sphere implements Hittable, Sampleable {
 
     private final Vec3 center;
     private final float radius;
@@ -48,4 +50,16 @@ public class Sphere implements Hittable {
         );
     }
 
+    @Override
+    public SurfaceSample sample(Sampler sampler) {
+        Vec3 position = center.add(Vec3.randomUnitVector(sampler).multiply(radius));
+        Vec3 normal = position.subtract(center).normalize();
+        float pdfArea = 1 / (4 * (float) Math.PI * radius * radius);
+        return new SurfaceSample(position, normal, pdfArea, material);
+    }
+
+    @Override
+    public float pdf(Vec3 point) {
+        return 1 / (4 * (float) Math.PI * radius * radius);
+    }
 }

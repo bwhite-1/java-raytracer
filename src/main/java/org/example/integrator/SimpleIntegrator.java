@@ -9,7 +9,7 @@ import org.example.core.Vec3;
 import org.example.sampler.Sampler;
 
 public class SimpleIntegrator implements Integrator {
-    public Colour li(Ray ray, Scene scene, Interval interval, Sampler sampler, int depth) {
+    public Colour li(Ray ray, Scene scene, Interval interval, PathState pathState, Sampler sampler, int depth) {
         if (depth <= 0) {
             return new Colour(0, 0, 0);
         }
@@ -25,6 +25,7 @@ public class SimpleIntegrator implements Integrator {
             Colour li = li(new Ray(intersection.getPosition(), scatterSample.direction()),
                     scene,
                     new Interval(0.001f, interval.getMax()),
+                    null,
                     sampler,
                     depth - 1
             );

@@ -4,10 +4,12 @@ import org.example.core.Colour;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.integrator.Integrator;
+import org.example.integrator.PathState;
 import org.example.sampler.Sampler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -29,7 +31,7 @@ public class TileOrchestrator {
         this.integrator = integrator;
         this.sampler = sampler;
         this.tileSize = tileSize;
-        this.executorService = Executors.newFixedThreadPool(8);
+        this.executorService = Executors.newFixedThreadPool(1);
     }
 
     public record Tile(int startX, int endX, int startY, int endY) { }
@@ -43,7 +45,7 @@ public class TileOrchestrator {
                     renderTile(tile);
                     onTileFinished.accept(tile);
                 } catch (Exception e) {
-                    System.out.print(e.getMessage());
+                    System.out.println(e.getMessage());
                 }
                 return null;
             });
@@ -59,7 +61,7 @@ public class TileOrchestrator {
                     float u = (i + sampler.next1D()) / (image.getImageWidth() -1);
                     float v = (image.getImageHeight() - 1 - (j + sampler.next1D())) / (image.getImageHeight() - 1);
                     Ray ray = scene.camera().getRay(u, v);
-                    Colour pixelColour = integrator.li(ray, scene, new Interval(), sampler, 5);
+                    Colour pixelColour = integrator.li(ray, scene, new Interval(), PathState.camera(), sampler, 5);
                     image.addColour(i, j, pixelColour);
                 }
             }

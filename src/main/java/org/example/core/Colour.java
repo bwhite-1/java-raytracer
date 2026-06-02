@@ -86,4 +86,8 @@ public final class Colour {
         return new Colour(1f, 1f, 1f);
     }
 
+    public static Colour black() {
+        return new Colour(0f, 0f, 0f);
+    }
+
 }

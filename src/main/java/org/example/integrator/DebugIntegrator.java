@@ -9,7 +9,7 @@ import org.example.core.Vec3;
 import org.example.sampler.Sampler;
 
 public class DebugIntegrator implements Integrator {
-    public Colour li(Ray ray, Scene scene, Interval interval, Sampler sampler, int depth) {
+    public Colour li(Ray ray, Scene scene, Interval interval, PathState pathState, Sampler sampler, int depth) {
         Intersection intersection = scene.accelerationStructure().hit(ray, interval);
         if (intersection != null) {
             Vec3 n = intersection.getNormal();

@@ -1,8 +1,7 @@
-package org.example.hittable;
+package org.example.material;
 
 import org.example.core.Colour;
 import org.example.core.Intersection;
-import org.example.material.Material;
 
 public class DiffuseLight implements Material {
     private final Colour emit;

@@ -12,18 +12,17 @@ import org.example.accelerationstructure.SplitHeuristic;
 import org.example.background.Background;
 import org.example.background.Sky;
 import org.example.core.Colour;
-import org.example.hittable.DiffuseLight;
+import org.example.integrator.MultipleImportanceIntegrator;
+import org.example.material.DiffuseLight;
 import org.example.hittable.Hittable;
 import org.example.hittable.Mesh;
 import org.example.hittable.Sphere;
 import org.example.hittable.Triangle;
-import org.example.integrator.DebugIntegrator;
 import org.example.integrator.Integrator;
 import org.example.integrator.SimpleIntegrator;
 import org.example.material.Ggx;
 import org.example.material.Lambertian;
 import org.example.material.Material;
-import org.example.material.Metal;
 import org.example.core.Vec3;
 import org.example.parser.ObjParser;
 import org.example.sampler.BasicSampler;
@@ -41,7 +40,7 @@ public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         Image image = new Image(800, 16.0f/9.0f, 50);
         Scene scene = getScene();
-        Integrator integrator = new SimpleIntegrator();
+        Integrator integrator = new MultipleImportanceIntegrator();
         Sampler sampler = new BasicSampler();
 
         TileOrchestrator orchestrator = new TileOrchestrator(image, scene, integrator, sampler, 64);
@@ -107,7 +106,7 @@ public class Main {
                 2,
                 new RandomMedianSplit()).build();
 
-        return new Scene(tlas, background, cam);
+        return new Scene(tlas, background, cam, List.of());
     }
 
     private static Scene getScene() throws IOException {
@@ -137,10 +136,13 @@ public class Main {
                 10000,
                 new Lambertian(new Colour(0.1f, 0.1f, 0.1f)))
         );
-        world.add(new Sphere(new Vec3(0, 500, 0),
+
+        Sphere light = new Sphere(new Vec3(0, 500, 0),
                 250,
-                new DiffuseLight(new Colour(2, 2, 2)))
+                new DiffuseLight(new Colour(2, 2, 2))
         );
+
+        world.add(light);
 
         AccelerationStructure tlas = new BvhBuilder(
                 world.toArray(new Hittable[0]),
@@ -160,7 +162,7 @@ public class Main {
                 .aspectRatio(16.0f/9.0f)
                 .build();
 
-        return new Scene(tlas, background, camera);
+        return new Scene(tlas, background, camera, List.of(light));
     }
 
     enum AccelerationStructureType {
