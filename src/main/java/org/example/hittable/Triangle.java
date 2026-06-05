@@ -5,9 +5,11 @@ import org.example.core.Intersection;
 import org.example.core.Interval;
 import org.example.core.Ray;
 import org.example.core.Vec3;
+import org.example.integrator.SurfaceSample;
 import org.example.material.Material;
+import org.example.sampler.Sampler;
 
-public class Triangle implements Hittable {
+public class Triangle implements Hittable, Sampleable {
 
     private final Vec3 v0;
     private final Vec3 v1;
@@ -66,5 +68,41 @@ public class Triangle implements Hittable {
         Vec3 min = v0.min(v1).min(v2);
         Vec3 max = v0.max(v1).max(v2);
         return new Aabb(min, max);
+    }
+
+    @Override
+    public SurfaceSample sample(Sampler sampler) {
+        float u1 = sampler.next1D();
+        float u2 = sampler.next1D();
+
+        float su1 = (float)Math.sqrt(u1);
+
+        float b0 = 1.0f - su1;
+        float b1 = u2 * su1;
+        float b2 = 1.0f - b0 - b1;
+
+        Vec3 p = v0.multiply(b0)
+                        .add(v1.multiply(b1))
+                        .add(v2.multiply(b2));
+
+        Vec3 edge1 = v1.subtract(v0);
+        Vec3 edge2 = v2.subtract(v0);
+        Vec3 outwardNormal = edge1.cross(edge2).normalize();
+        float area = 0.5f * edge1.cross(edge2).length();
+
+        return new SurfaceSample(
+                p,
+                outwardNormal,
+                area,
+                material
+        );
+    }
+
+    @Override
+    public float pdf(Vec3 point) {
+        Vec3 edge1 = v1.subtract(v0);
+        Vec3 edge2 = v2.subtract(v0);
+        float area = 0.5f * edge1.cross(edge2).length();
+        return 1f / area;
     }
 }

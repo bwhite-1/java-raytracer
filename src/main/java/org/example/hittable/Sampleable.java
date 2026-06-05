@@ -5,9 +5,7 @@ import org.example.integrator.SurfaceSample;
 import org.example.sampler.Sampler;
 
 public interface Sampleable {
-    default SurfaceSample sample(Sampler sampler) {
-        return null;
-    }
+    SurfaceSample sample(Sampler sampler);
 
-    default float pdf(Vec3 point) { return 0; }
+    float pdf(Vec3 point);
 }
