@@ -27,8 +27,13 @@ public class MultipleImportanceIntegrator implements Integrator {
         // emission
         Colour le = intersection.getMaterial().emitted(intersection);
         if (!le.equals(Colour.black())) {
-            // todo think this needs to be converted to a solid angle rather than area
-            float lightPdf = scene.getLightSample(sampler).pdfArea();
+            float lightPdfArea = scene.getLightSample(sampler).pdfArea();
+
+            Vec3 toLight = intersection.getPosition().subtract(ray.origin());
+            float distanceSq = toLight.lengthSquared();
+            float cosLight = Math.max(0, Vec3.dot(intersection.getNormal(), ray.direction().negate()));
+            float lightPdf = lightPdfArea * distanceSq / cosLight;
+
             float w = powerHeuristic(pathState.previousBsdfPdf(), lightPdf);
             l = l.add(le.multiply(w));
         }
