@@ -31,7 +31,7 @@ public class TileOrchestrator {
         this.integrator = integrator;
         this.sampler = sampler;
         this.tileSize = tileSize;
-        this.executorService = Executors.newFixedThreadPool(1);
+        this.executorService = Executors.newFixedThreadPool(8);
     }
 
     public record Tile(int startX, int endX, int startY, int endY) { }

@@ -30,7 +30,7 @@ public class MultipleImportanceIntegrator implements Integrator {
             // todo think this needs to be converted to a solid angle rather than area
             float lightPdf = scene.getLightSample(sampler).pdfArea();
             float w = powerHeuristic(pathState.previousBsdfPdf(), lightPdf);
-            l.add(le.multiply(w));
+            l = l.add(le.multiply(w));
         }
 
         // direct lighting
