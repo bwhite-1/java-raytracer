@@ -39,7 +39,7 @@ public class Sphere implements Hittable, Sampleable {
         if (t < 0.001f) return null;
 
         Vec3 normal = ray.at(t).subtract(center).divide(radius);
-        return new Intersection(ray, ray.at(t), normal, material, t);
+        return new Intersection(ray, ray.at(t), normal, material, this, t);
     }
 
     @Override

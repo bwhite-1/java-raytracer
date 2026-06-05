@@ -71,7 +71,7 @@ public class SmoothTriangle implements Hittable {
                         .add(vn2.multiply(v))
                         .normalize();
 
-        return new Intersection(ray, ray.at(t), interpolatedNormal, material, t);
+        return new Intersection(ray, ray.at(t), interpolatedNormal, material, null, t);
     }
 
     @Override

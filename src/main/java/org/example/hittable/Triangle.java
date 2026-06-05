@@ -58,7 +58,7 @@ public class Triangle implements Hittable {
 
         Vec3 outwardNormal = edge1.cross(edge2).normalize();
 
-        return new Intersection(ray, ray.at(t), outwardNormal, material, t);
+        return new Intersection(ray, ray.at(t), outwardNormal, material, null, t);
     }
 
     @Override

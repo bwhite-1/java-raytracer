@@ -112,23 +112,4 @@ public class Ggx implements Material {
         OrthoNormalBasis onb = new OrthoNormalBasis(n);
         return onb.toWorld(h);
     }
-
-    public static void main(String[] args) {
-        Ray rayIn = new Ray(
-                new Vec3(-1f, 1f, 0),
-                new Vec3(1f, -1f, 0)
-        );
-        Intersection intersection = new Intersection(rayIn, new Vec3(), new Vec3(0, 1, 0), null, 0);
-        Sampler s = new BasicSampler();
-
-        Ggx ggx = new Ggx(new Colour(1,1,1), 0.1f, false);
-        Vec3 rayOutDir = ggx.sample(rayIn, intersection, s).direction();
-
-        System.out.println("h:      " + ggx.sampleGgx(intersection.getNormal(), s.next1D(), s.next1D()));
-        System.out.println("rayIn:  " + rayIn.direction());
-        System.out.println("rayOut: " + rayOutDir);
-        System.out.println("pdf:    " + ggx.pdf(rayIn, intersection, rayOutDir, s));
-        System.out.println("eval:   " + ggx.evaluate(rayIn, intersection, rayOutDir, s));
-
-    }
 }
